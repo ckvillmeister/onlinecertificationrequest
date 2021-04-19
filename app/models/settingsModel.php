@@ -43,28 +43,6 @@ class settingsModel extends model{
 		return $setting;
 	}
 
-	public function get_barangays($status){
-
-		$query = 'SELECT record_id, barangay_name, status FROM tbl_barangay WHERE status = '.$status.' ORDER BY record_id';
-
-		$db = new database();
-		$this->con = $db->connection();
-		$stmt = $this->con->prepare($query);
-		$stmt->execute();
-		$stmt->bind_result($id, $name, $status);
-		$ctr=0;
-		$barangay = array();
-
-		while ($stmt->fetch()) {
-			$barangay[$ctr++] = array('id' => $id, 
-							'name' => $name,
-							'status' => $status);
-		}
-		$stmt->close();
-		$this->con->close();
-		return $barangay;
-	}
-
 	public function save_settings($name, $title, $bizname, $bizadd, $email, $number, $doctor, $licenseno, $ptr){
 		$db = new database();
 		$this->con = $db->connection();
@@ -214,6 +192,73 @@ class settingsModel extends model{
 			$this->con->close();
 			return 1;
 		}
+	}
+
+	public function get_symptoms_checklist($status){
+
+		$query = 'SELECT record_id, symptoms_description, status FROM tbl_symptoms_checklist WHERE status = ?';
+
+		$db = new database();
+		$this->con = $db->connection();
+		$stmt = $this->con->prepare($query);
+		$stmt->bind_param("s", $status);
+		$stmt->execute();
+		$stmt->bind_result($id, $desc, $status);
+		$ctr=0;
+		$checklist=array();
+		while ($stmt->fetch()) {
+			$checklist[$desc] = array('id' => $id, 
+							'desc' => $desc, 
+							'status' => $status);
+		}
+		
+		$stmt->close();
+		$this->con->close();
+		return $checklist;
+	}
+
+	public function retrieve_municipalities($province_code){
+		$db = new database();
+		$this->con = $db->connection();
+
+		$qry = "SELECT id, city_municipality_description, region_code, province_code, city_municipality_code, zipcode FROM tbl_address_citymun WHERE province_code = '".$province_code."' ORDER BY city_municipality_description ASC";
+		$stmt = $this->con->prepare($qry);
+		$stmt->execute();
+		$stmt->bind_result($id, $desc, $rcode, $pcode, $cmcode, $zcode);
+		$muncities = array();
+
+		while ($stmt->fetch()) {
+			$muncities[] = array('id' => $id, 
+							'desc' => $desc, 
+							'rcode' => $rcode,
+							'pcode' => $pcode,
+							'cmcode' => $cmcode,
+							'zcode' => $zcode);
+		}
+		$stmt->close();
+		$this->con->close();
+		return $muncities;
+	}
+
+	public function retrieve_barangays($citymun_code){
+		$db = new database();
+		$this->con = $db->connection();
+		$stmt = $this->con->prepare("SELECT id, barangay_code, barangay_description, region_code, province_code, city_municipality_code FROM tbl_address_barangay WHERE city_municipality_code = ".$citymun_code." ORDER BY barangay_description ASC");;
+		$stmt->execute();
+		$stmt->bind_result($id, $brgycode, $desc, $rcode, $pcode, $cmcode);
+		$brgys = array();
+
+		while ($stmt->fetch()) {
+			$brgys[] = array('id' => $id,
+							'brgycode' => $brgycode,
+							'desc' => $desc, 
+							'rcode' => $rcode,
+							'pcode' => $pcode,
+							'cmcode' => $cmcode);
+		}
+		$stmt->close();
+		$this->con->close();
+		return $brgys;
 	}
 
 }

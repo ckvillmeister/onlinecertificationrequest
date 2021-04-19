@@ -1,21 +1,85 @@
 $(document).ready(function(){
 
   var finding = 2;
-
   get_requests(2);
 
+  //New Request
   $('#btn_new_requests').click(function(){
     get_requests(2);
+    $('#control_buttons').html('<div class="row">' +
+                                '<div class="col-lg-3">' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:110px" id="btn_approve_all">Approve All</button>' +
+                                  '</div>' +
+                                '</div>');
   });
 
+  $('body').on('click', '#btn_approve_all', function(){
+    $.confirm({
+      title: 'Request Approval',
+      content: 'Do you want to approve all requests?',
+      type: 'blue',
+      buttons: {
+                yes: function () {
+                  $.alert({
+                    title: 'Approval Success',
+                    content: 'All pending request has been approved!',
+                    type: 'green',
+                    buttons: {
+                            ok: function(){
+                              approve_all_request();
+                              get_requests(2);  
+                            }
+                    }
+                  })
+                },
+                no: function () {
+
+                }
+              }
+    });
+  });
+
+  //Approved Request
   $('#btn_approved_requests').click(function(){
-    get_requests(3);
+    //get_requests(3);
+    $('#request_list').html('');
+    $('#control_buttons').html('<div class="row">' +
+                                  '<div class="col-lg-3">' +
+                                    '<select id="cbo_printstat" class="form-control form-control-sm mr-2">' +
+                                      '<option value=""> [ Print Status ] </option>' +
+                                      '<option value="1">Not Printed</option>' +
+                                      '<option value="2">Printed</option>' +
+                                      '<option value="3">All</option>' +
+                                    '</select>' +
+                                  '</div>' +
+                                  '<div class="col-lg-3">' +
+                                    '<select id="cbo_symptomstat" class="form-control form-control-sm mr-2">' +
+                                      '<option value=""> [ Symptom Status ] </option>' +
+                                      '<option value="1">Without Symptoms</option>' +
+                                      '<option value="2">With Symptoms</option>' +
+                                    '</select>' +
+                                  '</div>' +
+                                  '<div class="col-lg-3">' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:110px" id="btn_filter">Filter</button>' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:110px" id="btn_print_all">Print All</button>' +
+                                  '</div>' +
+                                '</div>');
   });
 
+  $('body').on('click', '#btn_filter', function(){
+    var printstat = $('#cbo_printstat').val(), 
+        symptomstat = $('#cbo_symptomstat').val();
+
+    get_filtered_requests(printstat, symptomstat);
+  });
+
+  //Reject Request
   $('#btn_rejected_requests').click(function(){
     get_requests(0);
+    $('#control_buttons').html('');
   });
 
+  //Add Findings
   $('#btn_add_findings').click(function(){
     $('#findings').append('<div class="row mt-3">'+
             '<div class="col-lg-2 align-self-center">Finding #' + finding + ':</div>' +
@@ -25,6 +89,7 @@ $(document).ready(function(){
     finding++;
   });
 
+  //Remove Findings
   $(document).on('click', '#btn_remove_finding', function(){
     $(this).closest('div').parent().remove();
     finding--;
@@ -36,12 +101,14 @@ $(document).ready(function(){
     });
   });
 
+  //Approve Request
   $('body').on('click', '#btn_approve', function(){
     var id = $(this).val();
 
     $.confirm({
       title: 'Process Request',
       content: 'Do you want to approve this request?',
+      type: 'blue',
       buttons: {
                 yes: function () {
                     toggle_request(id, 3);
@@ -54,12 +121,14 @@ $(document).ready(function(){
     });
   });
 
+  //Reject Request
   $('body').on('click', '#btn_reject', function(){
     var id = $(this).val();
 
     $.confirm({
       title: 'Process Request',
       content: 'Do you want to reject this request?',
+      type: 'blue',
       buttons: {
                 yes: function () {
                     toggle_request(id, 0);
@@ -72,12 +141,14 @@ $(document).ready(function(){
     });
   });
 
+  //Reactivate Request
   $('body').on('click', '#btn_reactivate', function(){
     var id = $(this).val();
 
     $.confirm({
       title: 'Process Request',
       content: 'Do you want to re-activate this request?',
+      type: 'blue',
       buttons: {
                 yes: function () {
                     toggle_request(id, 2);
@@ -90,7 +161,7 @@ $(document).ready(function(){
     });
   });
 
-  
+  //View Request
   $('body').on('click', '#btn_view', function(){
     var id = $(this).val();
     $('#btn_save').val(id);
@@ -104,16 +175,26 @@ $(document).ready(function(){
             })
   });
 
+  //Print Request
   $('body').on('click', '#btn_print', function(){
-    var id = $(this).val();
-    print_certificate(id);
+    var id = $(this).val(),
+        fullname = $(this).closest("tr").find('td:eq(1)').text();
+
+    var ids = [];
+    ids[0] = id;
+    print_certificate(ids, fullname);
   });
 
+  //Print Request
   $('#btn_print_this').click(function(){
-    var id = $(this).val();
-    print_certificate(id);
+    var id = $(this).val(),
+        fullname = $(this).closest("tr").find('td:eq(1)').text();
+    var ids = [];
+    ids[0] = id;
+    print_certificate(ids, fullname);
   });
 
+  //Save Request Information
   $('#btn_save').click(function(){
     var findings = [], ctr = 0, error = 0;
     $('#findings input[type="text"]').each(function(){
@@ -201,6 +282,7 @@ $(document).ready(function(){
           $.alert({
               title: 'Error!',
               content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
           });
       }
     })
@@ -219,6 +301,25 @@ $(document).ready(function(){
           $.alert({
               title: 'Error!',
               content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
+          });
+      }
+    })
+  }
+
+  function approve_all_request(){
+    $.ajax({
+        url: 'approve_all_request',
+          method: 'POST',
+          dataType: 'html',
+        success: function(result) {
+          
+        },
+        error: function(obj, err, ex){
+          $.alert({
+              title: 'Error!',
+              content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
           });
       }
     })
@@ -244,6 +345,7 @@ $(document).ready(function(){
           $.alert({
               title: 'Error!',
               content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
           });
       }
     })
@@ -282,6 +384,7 @@ $(document).ready(function(){
           $.alert({
               title: 'Error!',
               content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
           });
       }
     })
@@ -300,6 +403,7 @@ $(document).ready(function(){
           $.alert({
               title: 'Error!',
               content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
           });
       }
     })
@@ -356,16 +460,16 @@ $(document).ready(function(){
     })
   }
 
-  function print_certificate(id){
+  function print_certificate(id, fullname){
     $.ajax({
         url: 'print_certificate',
           method: 'POST',
-          data: {id: id},
+          data: {ids: id},
           dataType: 'html',
         success: function(result) {
-          var mywindow = window.open('', 'Medical Certificate', 'height=800,width=1020,scrollbars=yes');
+          var mywindow = window.open('', 'Medical Certificate - ' + fullname, 'height=800,width=1020,scrollbars=yes');
           mywindow.document.write('<html><head>');
-          mywindow.document.write('<title>Medical Certificate</title>');
+          mywindow.document.write('<title>Medical Certificate - ' + fullname + '</title>');
           mywindow.document.write('</head><body>');
           mywindow.document.write(result);
           mywindow.document.write('</body></html>');
@@ -379,6 +483,35 @@ $(document).ready(function(){
           $.alert({
               title: 'Error!',
               content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
+          });
+      }
+    })
+  }
+
+  function get_filtered_requests(printstat, symptomstat){
+    $.ajax({
+        url: 'get_filtered_requests',
+          method: 'POST',
+          data: {printstat: printstat, symptomstat: symptomstat},
+          dataType: 'html',
+        beforeSend: function() {
+          $('.overlay-wrapper').html('<div class="overlay">' +
+                    '<i class="fas fa-3x fa-sync-alt fa-spin"></i>' +
+                    '<div class="text-bold pt-2">Loading...</div>' +
+                        '</div>');
+          },
+        complete: function(){
+          $('.overlay-wrapper').html('');
+        },
+        success: function(result) {
+          $('#request_list').html(result);
+        },
+        error: function(obj, err, ex){
+          $.alert({
+              title: 'Error!',
+              content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
           });
       }
     })

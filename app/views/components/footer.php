@@ -8,12 +8,13 @@
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/jquery-mapael/jquery.mapael.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/jquery-mapael/maps/usa_states.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/chart.js/Chart.min.js"></script>
-<script src="<?php echo ROOT.BOOTSTRAP; ?>dist/js/pages/dashboard2.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>dist/js/jquery-confirm.min.js"></script>
+<script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/pdfmake/pdfmake.min.js"></script>
+<script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/pdfmake/vfs_fonts.js"></script>
 <script type="text/javascript">
 	$('.btn_submit_change_pass').click(function(){
 		if ($('#text_newpassword').val() == ''){

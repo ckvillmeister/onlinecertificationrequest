@@ -43,7 +43,18 @@
             <div class="overlay-wrapper">
             </div>
 
+
+            <div id="control_buttons" class="pr-3 pl-3 pb-3"> 
+              <div class="row">
+                <div class="col-lg-3">
+                  <button class="btn btn-sm btn-secondary mr-1" style="width:110px" id="btn_approve_all">Approve All</button>
+                </div>
+              </div>
+            </div>
+
             <div id="request_list" class="pr-3 pl-3 pb-3">
+              
+
             </div>
 
           </div>    

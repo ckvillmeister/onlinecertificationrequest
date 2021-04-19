@@ -293,10 +293,65 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="col-md-12 form-group">
-              <input type="text" name="name" class="form-control" id="text_address" placeholder="Complete Address" data-rule="minlen:1" data-msg="Please enter your complete address">
+            <div class="col-md-3 form-group">
+              <!--<input type="text" name="name" class="form-control" id="text_address" placeholder="Complete Address (Purok, Barangay, Municipality / City, Province" data-rule="minlen:1" data-msg="Please enter your complete address">
+              -->
+              <input type="text" name="name" class="form-control" id="text_addrprov" placeholder="Address (Province)" value="Bohol" readonly="readonly">
               <div class="error-message-address"></div>
             </div>
+            <div class="col-md-3 form-group">
+              <select id="cbo_muncity" class="form-control">
+                <option value=""> [ Municipality/City ] </option>
+                <?php
+                  foreach ($data['muncities'] as $key => $muncity) {
+                    echo "<option data-id='".$muncity['cmcode']."' value='".$muncity['desc']."'>".ucwords(strtolower($muncity['desc']))."</option>";
+                  }
+                ?>
+              </select>
+              <div class="error-message-address"></div>
+            </div>
+            <div class="col-md-3 form-group">
+              <select id="cbo_barangay" class="form-control">
+                <option value=""> [ Barangay ] </option>
+              </select>
+              <div class="error-message-address"></div>
+            </div>
+            <div class="col-md-3 form-group">
+              <select id="cbo_purok" class="form-control">
+                <option value=""> [ Purok ] </option>
+                <option value=""> Purok 1 </option>
+                <option value=""> Purok 2 </option>
+                <option value=""> Purok 3 </option>
+                <option value=""> Purok 4 </option>
+                <option value=""> Purok 5 </option>
+                <option value=""> Purok 6 </option>
+                <option value=""> Purok 7 </option>
+              </select>
+              <div class="error-message-address"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-md-12 text-center">
+              <h5><strong>Symptoms Checklist</strong></h5>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-md-12 text-info">
+              <p>Please check if you're experiencing the following: </p>
+            </div>
+          </div>
+          <div class="form-row" id="symptoms_checklist">
+            <?php 
+              foreach ($data['checklist'] as $key => $symptom) {
+            ?>
+              <div class="col-md-4 p-1">
+                <div class="bg-light p-1">
+                  <h5><input type="checkbox" class="align-middle ml-2 mr-4" value="<?php echo $symptom['id']; ?>" data-desc="<?php echo $symptom['desc']; ?>"><?php echo $symptom['desc']; ?></h5>
+                </div>
+              </div>
+            <?php
+              }
+            ?>
           </div>
           <div class="mb-3">
             <div class="message-request"></div>

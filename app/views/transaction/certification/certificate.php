@@ -1,14 +1,3 @@
-<?php
-	$client_info = $data['info'];
-	$settings = $data['settings'];
-	$fullname = strtoupper(trim($client_info['firstname'].' '.$client_info['middlename'].' '.$client_info['lastname'].' '.$client_info['extension']));
-	$address = strtoupper($client_info['address']);
-	$sex = strtoupper($client_info['sex']);
-	
-	$birthdate = new DateTime(date("Y-m-d", strtotime($client_info['dob'])));
-    $today= new DateTime(date("Y-m-d"));           
-    $age = $birthdate->diff($today)->y;
-?>
 <style>
 	body {
 	  -webkit-print-color-adjust: exact !important;
@@ -28,7 +17,7 @@
 	}
 
 	.findings{
-		text-indent: 20%;
+		text-indent: 15%;
 	}
 	
 	.title{
@@ -47,10 +36,15 @@
 		background: #6b2900 !important;
 		height: 6px;
 	}
-
-	@page {
-  		margin: 12mm 25.6mm 12mm 25.6mm;  
-  	} 
+	@media print 
+	{
+	   @page
+	   {
+	    size: 11in 8.5in ;
+	    size: portrait;
+	    margin: 12mm 25.6mm 12mm 25.6mm;
+	  }
+	}
 </style>
 <link rel="icon" href="<?php echo ($imgurl) ? ROOT.$imgurl['desc'] : "" ; ?>">
 <link rel="stylesheet" href="<?php echo ROOT.BOOTSTRAP; ?>plugins/fontawesome-free/css/all.min.css">
@@ -59,6 +53,20 @@
 <link rel="stylesheet" href="<?php echo ROOT.BOOTSTRAP; ?>plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="<?php echo ROOT.BOOTSTRAP; ?>plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 <link rel="stylesheet" href="<?php echo ROOT.BOOTSTRAP; ?>dist/css/jquery-confirm.min.css">
+<?php
+	$settings = $data['settings'];
+
+	foreach ($data['certs'] as $key => $cert) {
+	$client_info = $cert['info'];
+	
+	$fullname = strtoupper(trim($client_info['firstname'].' '.$client_info['middlename'].' '.$client_info['lastname'].' '.$client_info['extension']));
+	$address = strtoupper($client_info['address']);
+	$sex = strtoupper($client_info['sex']);
+	
+	$birthdate = new DateTime(date("Y-m-d", strtotime($client_info['dob'])));
+    $today= new DateTime(date("Y-m-d"));           
+    $age = $birthdate->diff($today)->y;
+?>
 <div class="wrapper">
 	<div class="row">
 		<div class="col-lg-12 text-center">
@@ -113,7 +121,7 @@
 	<div class="row content findings">
 		<div class="col-lg-12">
 			<?php
-				foreach ($data['findings'] as $key => $finding) {
+				foreach ($cert['findings'] as $key => $finding) {
 			?>
 				<!--<div class="row">
 					<div class="col-lg-12">-->
@@ -135,14 +143,14 @@
 	<div class="row content issuance-date">
 		<div class="col-lg-12">
 			<p>
-				Done this day <strong><?php echo date('jS'); ?></strong> of <strong><?php echo date('F Y'); ?></strong> at <strong><?php echo $data['settings']['Business Name']['desc'].' '.$data['settings']['Business Address']['desc']; ?></strong>.
+				Done this day <strong><?php echo date('jS'); ?></strong> of <strong><?php echo date('F Y'); ?></strong> at <strong><?php echo $settings['Business Name']['desc'].' '.$settings['Business Address']['desc']; ?></strong>.
 			</p>
 		</div>
 	</div>
 	<div class="row content note">
 		<div class="col-lg-12">
 			<br><br>
-			<p class="mr-3">Note:&nbsp;<?php echo ($data['note']['note']) ? $data['note']['note'] : "None"; ?></p>
+			<p class="mr-3">Note:&nbsp;<?php echo ($cert['note']['note']) ? $cert['note']['note'] : "None"; ?></p>
 		</div>
 	</div>
 	<div class="row singatories">
@@ -160,3 +168,6 @@
 		</div>
 	</div>
 </div>
+<?php 
+	}
+?>

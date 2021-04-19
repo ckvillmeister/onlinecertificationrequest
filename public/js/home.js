@@ -42,6 +42,11 @@ $(document).ready(function(){
 		}
     });
 
+    $('#cbo_muncity').on('change', function(){
+    	var cmcode = $('#cbo_muncity').attr("data-id");
+    	alert(cmcode);
+    });
+
     $('#btn_submitrequest').click(function(e){
 		var firstname = $('#text_firstname').val(),
 			middlename = $('#text_middlename').val(),
@@ -95,7 +100,16 @@ $(document).ready(function(){
 		}
 
 		if (error == false){
-			submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate);
+
+			var symptoms = [], ctr = 0;
+		    $('#symptoms_checklist input[type="checkbox"]').each(function(){
+		      if ($(this).is(':checked')){
+		        symptoms[ctr] = [$(this).val(), $(this).attr("data-desc")];
+		        ctr++;
+		      }
+		    });
+
+			submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, symptoms);
 		}
 	});
 
@@ -126,35 +140,103 @@ $(document).ready(function(){
 		})
 	}
 
-	function submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate){
-		$.ajax({
-		    url: 'transaction/process_request',
-	        method: 'POST',
-	        data: {firstname: firstname, 
-	        		middlename: middlename,
-		        	lastname: lastname,
-		        	extension: extension,
-		    		address: address,
-		    		sex: sex,
-		    		dob: dob,
-					contact: contact,
-					pickupdate: pickupdate},
-	        success: function(result) {
-	        	if (result == 1){
-	        		$.alert({
-					    title: 'Success',
-					    type: 'red',
-					    content: 'Your request has been sent!',
+	function submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, symptoms){
+		
+		var sym = '', sym_val = [], ctr = 0;
+
+		$.each(symptoms , function(i, val) { 
+			$.each(val , function(index, value) { 
+				if (index == 1){	
+					sym += '<div class="form-row m-2">' +
+								'<div class="col-sm-12"><strong>' + '- ' + value + '</strong></div>' +
+							'</div>';
+				}
+				else{
+					sym_val[ctr] = value;
+					ctr++;
+				}
+			});	
+		}); 
+
+		if (sym == ''){
+			sym = '<div class="form-row m-2">' +
+						'<div class="col-sm-12"><strong>None</strong></div>' +
+					'</div>';
+		}
+
+		$.confirm({
+			title: 'Confirm',
+			type: 'blue',
+			columnClass: 'col-lg-12',
+			content: '<div class="form-row m-2">' +
+					 	'<div class="col-sm-2">Fullname: </div>' +
+					 	'<div class="col-sm-10"><strong>'+ firstname + ' ' + middlename + ' ' + lastname + ' ' + extension + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-2">Address: </div>' +
+					 	'<div class="col-sm-10"><strong>'+ address + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-2">Sex: </div>' +
+					 	'<div class="col-sm-10"><strong>'+ sex + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-2">Date of Birth: </div>' +
+					 	'<div class="col-sm-10"><strong>'+ dob + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-2">Contact Number: </div>' +
+					 	'<div class="col-sm-10"><strong>'+ dob + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-2">Pick-up Date: </div>' +
+					 	'<div class="col-sm-10"><strong>'+ pickupdate + '</strong></div>' +
+					 '</div><br>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-2">Symptoms: </div>'+
+					 '</div>' + sym,
+			buttons: {
+		        confirm: function () {
+		            $.ajax({
+					    url: 'transaction/process_request',
+				        method: 'POST',
+				        data: {firstname: firstname, 
+				        		middlename: middlename,
+					        	lastname: lastname,
+					        	extension: extension,
+					    		address: address,
+					    		sex: sex,
+					    		dob: dob,
+								contact: contact,
+								pickupdate: pickupdate,
+								symptoms: sym_val},
+				        success: function(result) {
+				        	if (result == 1){
+				        		$.alert({
+								    title: 'Success',
+								    type: 'green',
+								    content: 'Your request has been sent!',
+								    buttons: {
+								        ok: function(){
+								        	location.reload();
+								        }
+								    }
+
+								});
+
+								
+				        	}
+				        	else{
+				        		$.alert({
+								    title: 'Error',
+								    type: 'red',
+								    content: 'Error during submission!',
+								});
+				        	}
+					    }
 					});
-	        	}
-	        	else{
-	        		$.alert({
-					    title: 'Error',
-					    type: 'red',
-					    content: 'Error during submission!',
-					});
-	        	}
+		    	}
 		    }
-		})
+		});
 	}
 });

@@ -146,8 +146,8 @@ $new_reqs = count($transaction_model->get_requests(1));
         <?php endif; ?>
 
         <?php if ($accessrole_model->check_access($role, 'maintenance')): ?>
-        <li class="nav-item has-treeview <?php if (($link == 'candidates' & ($link_2 == '' | $link_2 == 'profile')) | ($link == 'voter' & $link_2 == '') | ($link == 'settings' & $link_2 == 'barangay') | $link=='accessrole' | $link=='accounts' | $link=='settings'){ echo 'menu-open'; } ?>">
-          <a href="#" class="nav-link <?php if (($link == 'candidates' & ($link_2 == '' | $link_2 == 'profile')) | ($link == 'voter' & $link_2 == '') | ($link == 'settings' & $link_2 == 'barangay') | $link=='accessrole' | $link=='accounts' | $link=='settings'){ echo 'active'; } ?>">
+        <li class="nav-item has-treeview <?php if (($link == 'candidates' & ($link_2 == '' | $link_2 == 'profile')) | ($link == 'voter' & $link_2 == '') | ($link == 'settings' & $link_2 == 'barangay') | $link=='accessrole' | $link=='accounts' | $link=='settings' | $link=='checklist'){ echo 'menu-open'; } ?>">
+          <a href="#" class="nav-link <?php if (($link == 'candidates' & ($link_2 == '' | $link_2 == 'profile')) | ($link == 'voter' & $link_2 == '') | ($link == 'settings' & $link_2 == 'barangay') | $link=='accessrole' | $link=='accounts' | $link=='settings' | $link =='checklist'){ echo 'active'; } ?>">
             <i class="nav-icon fas fa-wrench"></i>
             <p>
               Maintenance
@@ -155,6 +155,15 @@ $new_reqs = count($transaction_model->get_requests(1));
             </p>
           </a>
           <ul class="nav nav-treeview">
+
+            <?php if ($accessrole_model->check_access($role, 'checklist')): ?>
+            <li class="nav-item">
+              <a href="<?php echo ROOT; ?>checklist" class="nav-link <?php echo ($link == 'checklist') ? 'active' : ''; ?>">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Checklist</p>
+              </a>
+            </li>
+            <?php endif; ?>
 
             <?php if ($accessrole_model->check_access($role, 'roles')): ?>
             <li class="nav-item">

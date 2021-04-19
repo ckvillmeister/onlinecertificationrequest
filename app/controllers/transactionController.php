@@ -38,11 +38,13 @@ class transactionController extends controller{
 		$dob = isset($_POST['dob']) ? $_POST['dob'] : '';
 		$contact = isset($_POST['contact']) ? $_POST['contact'] : '';
 		$pickupdate = isset($_POST['pickupdate']) ? $_POST['pickupdate'] : '';
+		$symptoms = isset($_POST['symptoms']) ? $_POST['symptoms'] : '';
 		$new_date =date("Y-m-d",strtotime($pickupdate));
 		$new_dob =date("Y-m-d",strtotime($dob));
 
 		$transaction_model = new transactionModel();
-		$result = $transaction_model->process_request($firstname, $middlename, $lastname, $extension, $address, $sex, $new_dob, $contact, $new_date);
+		$result = $transaction_model->process_request($firstname, $middlename, $lastname, $extension, $address, $sex, $new_dob, $contact, $new_date, $symptoms);
+
 		echo $result;
 	}
 
@@ -63,6 +65,16 @@ class transactionController extends controller{
 		$this->view()->render('transaction/certification/list.php', array('requests' => $requests));
 	}
 
+	public function get_filtered_requests(){
+		$printstat = isset($_POST['printstat']) ? $_POST['printstat'] : 0;
+		$symptomstat = isset($_POST['symptomstat']) ? $_POST['symptomstat'] : 0;
+
+		$transaction_model = new transactionModel();
+		$requests = $transaction_model->get_filtered_requests($printstat, $symptomstat);
+		
+		$this->view()->render('transaction/certification/list.php', array('requests' => $requests));
+	}
+
 	public function toggle_request(){
 		$id = isset($_POST['id']) ? $_POST['id'] : 0;
 		$status = isset($_POST['status']) ? $_POST['status'] : 0;
@@ -72,21 +84,10 @@ class transactionController extends controller{
 		echo $result;
 	}
 
-	public function print_certificate(){
-		$id = isset($_POST['id']) ? $_POST['id'] : 0;
-
+	public function approve_all_request(){
 		$transaction_model = new transactionModel();
-		$info = $transaction_model->get_request_info($id);
-		$findings = $transaction_model->get_patient_findings($id);
-		$note = $transaction_model->get_patient_note($id);
-
-		$settings_model = new settingsModel();
-		$settings = $settings_model->get_settings();
-
-		$this->view()->render('transaction/certification/certificate.php', array('info' => $info,
-																					'findings' => $findings,
-																					'note' => $note,
-																					'settings' => $settings));
+		$result = $transaction_model->toggle_requests(3, 2);
+		echo $result;
 	}
 
 	public function get_findings(){
@@ -130,6 +131,50 @@ class transactionController extends controller{
 			$result = 1;
 		}
 		echo $result;
+	}
+
+	public function print_certificate(){
+		$ids = isset($_POST['ids']) ? $_POST['ids'] : 0;
+		$sym_stat = isset($_POST['sym_stat']) ? $_POST['sym_stat'] : 0;
+
+		$transaction_model = new transactionModel();
+		$certs = array();
+		$findings = array();
+		$ctr = 0;
+		$note = "";
+
+		foreach ($ids as $key => $id) {
+			$info = $transaction_model->get_request_info($id);
+
+			if ($sym_stat == 1){
+				$findings = array('' => array('finding' => "UNREMARKABLE HISTORY AND PHYSICAL EXAM FINDINGS"));
+				$note = array('note'=> "PHYSICALLY AND MENTALLY FIT TO STUDY");
+			}
+			else{
+				$res = $transaction_model->checkSymptoms($id);
+
+				if ($res == 1){
+					$findings = $transaction_model->get_patient_findings($id);
+					$note = $transaction_model->get_patient_note($id);
+				}
+				else{
+					$findings = array('' => array('finding' => "UNREMARKABLE HISTORY AND PHYSICAL EXAM FINDINGS"));
+					$note = array('note'=> "PHYSICALLY AND MENTALLY FIT TO STUDY");
+				}
+			}
+
+			$transaction_model->updatePrintedStatus($id);
+
+			$certs[$ctr] = array('info' => $info,
+									'findings' => $findings,
+									'note' => $note);
+			$ctr++;
+		}
+
+		$settings_model = new settingsModel();
+		$settings = $settings_model->get_settings();
+
+		$this->view()->render('transaction/certification/certificate.php', array('certs' => $certs, 'settings' => $settings));
 	}
 
 }
