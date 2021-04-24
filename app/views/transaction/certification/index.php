@@ -92,6 +92,13 @@
           <div class="col-lg-2">
               <select class="form-control form-control-sm" id="cbo_extension">
                 <option value=""> [ Extension ] </option>
+                <option value="Jr.">Jr.</option>
+                <option value="Sr.">Sr.</option>
+                <option value="I">I</option>
+                <option value="II">II</option>
+                <option value="III">III</option>
+                <option value="IV">IV</option>
+                <option value="V">V</option>
               </select>
           </div>
         </div>
@@ -103,8 +110,8 @@
           <div class="col-lg-3">
               <select class="form-control form-control-sm" id="cbo_sex">
                 <option value=""> [ Male / Female ] </option>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
           </div>
           <div class="col-lg-1 align-self-center">

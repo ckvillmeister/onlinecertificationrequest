@@ -43,8 +43,9 @@ $(document).ready(function(){
     });
 
     $('#cbo_muncity').on('change', function(){
-    	var cmcode = $('#cbo_muncity').attr("data-id");
-    	alert(cmcode);
+    	var selected = $('#cbo_muncity').find('option:selected');
+    	var data = selected.data('id'); 
+    	retireve_barangays(data);
     });
 
     $('#btn_submitrequest').click(function(e){
@@ -52,7 +53,10 @@ $(document).ready(function(){
 			middlename = $('#text_middlename').val(),
 			lastname = $('#text_lastname').val(),
 			extension = $('#cbo_extension').val(),
-			address = $('#text_address').val(),
+			prov = $('#text_prov').val(),
+			muncity = $('#cbo_muncity').val(),
+			brgy = $('#cbo_barangay').val(),
+			purok = $('#cbo_purok').val(),
 			sex = $('#cbo_sex').val(),
 			dob = $('#text_dob').val(),
 			contact = $('#text_contactno').val(),
@@ -79,14 +83,34 @@ $(document).ready(function(){
 			$('.error-message-lastname').addClass("text-success");
 		}
 
-		if(address == ''){
-			$('.error-message-address').html("<span id='message'>Please enter your complete address!</span>");
-			$('.error-message-address').addClass("text-danger");
+		if(muncity == ''){
+			$('.error-message-addrmuncity').html("<span id='message'>Please select a municipality!</span>");
+			$('.error-message-addrmuncity').addClass("text-danger");
 			error = true;
 		}
 		else{
-			$('.error-message-address').html("<span id='message'></span>");
-			$('.error-message-address').addClass("text-success");
+			$('.error-message-addrmuncity').html("<span id='message'></span>");
+			$('.error-message-addrmuncity').addClass("text-success");
+		}
+
+		if(brgy == ''){
+			$('.error-message-addrbrgy').html("<span id='message'>Please select a barangay!</span>");
+			$('.error-message-addrbrgy').addClass("text-danger");
+			error = true;
+		}
+		else{
+			$('.error-message-addrbrgy').html("<span id='message'></span>");
+			$('.error-message-addrbrgy').addClass("text-success");
+		}
+
+		if(purok == ''){
+			$('.error-message-addrpurok').html("<span id='message'>Please select a purok!</span>");
+			$('.error-message-addrpurok').addClass("text-danger");
+			error = true;
+		}
+		else{
+			$('.error-message-addrpurok').html("<span id='message'></span>");
+			$('.error-message-addrpurok').addClass("text-success");
 		}
 
 		if(contact == ''){
@@ -108,6 +132,8 @@ $(document).ready(function(){
 		        ctr++;
 		      }
 		    });
+
+		    var address = purok + ', ' + brgy + ', ' + muncity + ', ' + prov; 
 
 			submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, symptoms);
 		}
@@ -235,8 +261,30 @@ $(document).ready(function(){
 				        	}
 					    }
 					});
-		    	}
+		    	},
+			    cancel: function(){
+
+			    }
+		    	
 		    }
 		});
+	}
+
+	function retireve_barangays(muncity_code){
+		$.ajax({
+		    url: 'home/retrieve_barangays',
+	        method: 'POST',
+	        data: {muncity_code: muncity_code},
+	        dataType: 'JSON',
+	        success: function(result) {
+	        	$.each(result, function(key, value) {
+	        		$.each(this, function(key, value) {
+	        			if (key == 'desc'){
+	        				$('#cbo_barangay').append('<option value="'+value+'">'+value+'</option>');
+	        			}
+	        		});
+	        	});
+		    }
+		})
 	}
 });

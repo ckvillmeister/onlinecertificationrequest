@@ -37,13 +37,14 @@
             </div>
 
             <div class="row p-3 shadow-none m-3 bg-light rounded">
-              <div class="col-lg-2 align-self-center" style="vertical-align: middle;">
-                
+              <div class="col-lg-4 align-self-center" style="vertical-align: middle;">
+                <select class="form-control form-control-sm">
+                  <option value=""></option>
+                  <option value="1">Printed Request</option>
+                  <option value="2">Not Printed Request</option>
+                </select>
               </div>
-              <div class="col-lg-3">
-                
-              </div>
-              <div class="col-lg-5">
+              <div class="col-lg-6">
                 <button class="btn btn-sm btn-primary" id="btn_view_ward_list"><icon class="fas fa-thumbs-up mr-2"></icon>Submit</button>
               </div>
               <div class="col-lg-2">

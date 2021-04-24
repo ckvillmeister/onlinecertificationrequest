@@ -44,3 +44,14 @@
 	?>    
   </tbody>
 </table>
+
+<script type="text/javascript">
+  var table = $('#table_access_role_list').DataTable({
+    "ordering": false,
+    styles: {
+      tableHeader: {
+        fontSize: 8
+      }
+    }
+  });
+</script>

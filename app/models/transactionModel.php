@@ -18,8 +18,8 @@ class transactionModel extends model{
 		$this->con = $db->connection();
 		
 		//Save Request
-		$stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		$stmt->bind_param("sssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $status);
+		$stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		$stmt->bind_param("ssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $status, $status);
 		$stmt->execute();
 
 		if ($symptoms){
@@ -120,19 +120,6 @@ class transactionModel extends model{
 		$stmt->close();
 		$this->con->close();
 		return $result;
-	}
-
-	public function count_new_request(){
-		$db = new database();
-		$connection = $db->connection();
-		$query = 'SELECT COUNT(*) AS requests FROM tbl_certification_request WHERE new_request = 1';
-		$stmt = $connection->prepare($query);
-		$stmt->execute();
-		$data = $stmt->get_result()->fetch_assoc();
-		$count = $data['requests'];
-
-		$stmt->close();
-		return $count;
 	}
 
 	public function toggle_request($id, $status){

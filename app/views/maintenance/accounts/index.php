@@ -40,11 +40,7 @@
               </div>
             </div>
 
-            <div class="row p-3 shadow-none ml-3 mr-3 mb-3 bg-light rounded">
-              <div class="col-lg-12 align-self-center">
-                <div id="user_list">
-                </div>
-              </div>
+            <div id="user_list" class="ml-3 mr-3 mb-3">
             </div>
 
           </div>    

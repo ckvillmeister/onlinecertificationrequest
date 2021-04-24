@@ -140,12 +140,19 @@
 
         <div class="row">
           <div class="col-xl-5 col-lg-6 video-box d-flex justify-content-center align-items-stretch">
-            <a href="https://www.youtube.com/watch?v=jDDaplaOz7Q" class="venobox play-btn mb-4" data-vbtype="video" data-autoplay="true"></a>
+            <a href="#" class="venobox play-btn mb-4" data-vbtype="video" data-autoplay="true"></a>
           </div>
 
           <div class="col-xl-7 col-lg-6 icon-boxes d-flex flex-column align-items-stretch justify-content-center py-5 px-lg-5">
-            <h3>Enim quis est voluptatibus aliquid consequatur fugiat</h3>
-            <p>Esse voluptas cumque vel exercitationem. Reiciendis est hic accusamus. Non ipsam et sed minima temporibus laudantium. Soluta voluptate sed facere corporis dolores excepturi. Libero laboriosam sint et id nulla tenetur. Suscipit aut voluptate.</p>
+            <h3>About <?php echo ($data['settings']['Business Name']['desc']) ? $data['settings']['Business Name']['desc'] : "" ; ?></h3>
+            <p>
+              <?php echo ($data['settings']['Business Name']['desc']) ? $data['settings']['Business Name']['desc'] : "" ; ?> 
+              located at 
+              <?php echo ($data['settings']['Business Address']['desc']) ? $data['settings']['Business Address']['desc'] : "" ; ?> 
+              is owned by 
+              <?php echo ($data['settings']['Clinic Doctor']['desc']) ? $data['settings']['Clinic Doctor']['desc'] : "" ; ?>.
+              
+            </p>
 
             <div class="icon-box">
               <div class="icon"><i class="bx bx-fingerprint"></i></div>
@@ -170,69 +177,6 @@
 
       </div>
     </section><!-- End About Section -->
-
-    <!-- ======= Services Section ======= -->
-    <section id="services" class="services">
-      <div class="container">
-
-        <div class="section-title">
-          <h2>Services</h2>
-          <p></p>
-        </div>
-
-        <div class="row">
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-            <div class="icon-box">
-              <div class="icon"><i class="icofont-heart-beat"></i></div>
-              <h4><a href="">Lorem Ipsum</a></h4>
-              <p>Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-            <div class="icon-box">
-              <div class="icon"><i class="icofont-drug"></i></div>
-              <h4><a href="">Sed ut perspiciatis</a></h4>
-              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
-            <div class="icon-box">
-              <div class="icon"><i class="icofont-dna-alt-2"></i></div>
-              <h4><a href="">Magni Dolores</a></h4>
-              <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
-            <div class="icon-box">
-              <div class="icon"><i class="icofont-heartbeat"></i></div>
-              <h4><a href="">Nemo Enim</a></h4>
-              <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
-            <div class="icon-box">
-              <div class="icon"><i class="icofont-disabled"></i></div>
-              <h4><a href="">Dele cardo</a></h4>
-              <p>Quis consequatur saepe eligendi voluptatem consequatur dolor consequuntur</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
-            <div class="icon-box">
-              <div class="icon"><i class="icofont-autism"></i></div>
-              <h4><a href="">Divera don</a></h4>
-              <p>Modi nostrum vel laborum. Porro fugit error sit minus sapiente sit aspernatur</p>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section><!-- End Services Section -->
 
     <!-- ======= Certficate Request ======= -->
     <section id="appointment" class="appointment section-bg">
@@ -275,8 +219,8 @@
             <div class="col-md-3 form-group">
               <select id="cbo_sex" class="form-control">
                 <option value=""> [ Sex ] </option>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
             <div class="col-md-3 form-group">
@@ -296,7 +240,7 @@
             <div class="col-md-3 form-group">
               <!--<input type="text" name="name" class="form-control" id="text_address" placeholder="Complete Address (Purok, Barangay, Municipality / City, Province" data-rule="minlen:1" data-msg="Please enter your complete address">
               -->
-              <input type="text" name="name" class="form-control" id="text_addrprov" placeholder="Address (Province)" value="Bohol" readonly="readonly">
+              <input type="text" name="name" class="form-control" id="text_prov" placeholder="Address (Province)" value="Bohol" readonly="readonly">
               <div class="error-message-address"></div>
             </div>
             <div class="col-md-3 form-group">
@@ -304,30 +248,30 @@
                 <option value=""> [ Municipality/City ] </option>
                 <?php
                   foreach ($data['muncities'] as $key => $muncity) {
-                    echo "<option data-id='".$muncity['cmcode']."' value='".$muncity['desc']."'>".ucwords(strtolower($muncity['desc']))."</option>";
+                    echo "<option data-id='".$muncity['cmcode']."' value='".ucwords(strtolower($muncity['desc']))."'>".ucwords(strtolower($muncity['desc']))."</option>";
                   }
                 ?>
               </select>
-              <div class="error-message-address"></div>
+               <div class="error-message-addrmuncity"></div>
             </div>
             <div class="col-md-3 form-group">
               <select id="cbo_barangay" class="form-control">
                 <option value=""> [ Barangay ] </option>
               </select>
-              <div class="error-message-address"></div>
+              <div class="error-message-addrbrgy"></div>
             </div>
             <div class="col-md-3 form-group">
               <select id="cbo_purok" class="form-control">
                 <option value=""> [ Purok ] </option>
-                <option value=""> Purok 1 </option>
-                <option value=""> Purok 2 </option>
-                <option value=""> Purok 3 </option>
-                <option value=""> Purok 4 </option>
-                <option value=""> Purok 5 </option>
-                <option value=""> Purok 6 </option>
-                <option value=""> Purok 7 </option>
+                <option value="Purok 1"> Purok 1 </option>
+                <option value="Purok 2"> Purok 2 </option>
+                <option value="Purok 3"> Purok 3 </option>
+                <option value="Purok 4"> Purok 4 </option>
+                <option value="Purok 5"> Purok 5 </option>
+                <option value="Purok 6"> Purok 6 </option>
+                <option value="Purok 7"> Purok 7 </option>
               </select>
-              <div class="error-message-address"></div>
+              <div class="error-message-addrpurok"></div>
             </div>
           </div>
           <div class="form-row">
@@ -362,7 +306,46 @@
 
       </div>
     </section>
-    <br>
+
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Services</h2>
+          <p></p>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+            <div class="icon-box">
+              <div class="icon"><i class="icofont-heart-beat"></i></div>
+              <h4><a href="">Lorem Ipsum</a></h4>
+              <p>Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
+            <div class="icon-box">
+              <div class="icon"><i class="icofont-drug"></i></div>
+              <h4><a href="">Sed ut perspiciatis</a></h4>
+              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
+            <div class="icon-box">
+              <div class="icon"><i class="icofont-dna-alt-2"></i></div>
+              <h4><a href="">Magni Dolores</a></h4>
+              <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
     <!-- ======= Frequently Asked Questions Section ======= -->
     <section id="faq" class="faq section-bg mt-5">
       <div class="container">
@@ -374,14 +357,25 @@
 
         <div class="faq-list">
           <ul>
-            <li data-aos="fade-up">
-              <i class="bx bx-help-circle icon-help"></i> <a data-toggle="collapse" class="collapse" href="#faq-list-1">Non consectetur a erat nam at lectus urna duis? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
-              <div id="faq-list-1" class="collapse show" data-parent=".faq-list">
-                <p>
-                  Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.
-                </p>
-              </div>
-            </li>
+            <?php 
+              foreach ($data['faqs'] as $key => $faq) {
+            ?>
+              <li data-aos="fade-up">
+                <i class="bx bx-help-circle icon-help"></i> 
+                  <a data-toggle="collapse" class="collapse" href="#faq-list-1">
+                    <?php echo $faq['question']; ?> 
+                    <i class="bx bx-chevron-down icon-show"></i>
+                    <i class="bx bx-chevron-up icon-close"></i>
+                  </a>
+                <div id="faq-list-1" class="collapse show" data-parent=".faq-list">
+                  <p>
+                    <?php echo $faq['answer']; ?> 
+                  </p>
+                </div>
+              </li>
+            <?php
+              }
+            ?>
           </ul>
         </div>
 
@@ -402,13 +396,19 @@
       <div class="container-fluid">
         <div class="row no-gutters">
 
-          <div class="col-lg-3 col-md-4">
-            <div class="gallery-item">
-              <a href="assets/img/gallery/gallery-1.jpg" class="venobox" data-gall="gallery-item">
-                <img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/gallery/gallery-1.jpg" alt="" class="img-fluid">
-              </a>
-            </div>
-          </div>
+          <?php 
+              foreach ($data['photos'] as $key => $photo) {
+            ?>
+                <div class="col-lg-3 col-md-4">
+                  <div class="gallery-item">
+                    <!--<a href="<?php echo ROOT.$photo['url'] ?>" class="venobox" data-gall="gallery-item">-->
+                      <img src="<?php echo ROOT.$photo['url'] ?>" alt="<?php echo ROOT.$photo['caption'] ?>" class="img-fluid">
+                    <!--</a>-->
+                  </div>
+                </div>
+          <?php
+              }
+            ?>
 
         </div>
       </div>
@@ -466,9 +466,9 @@
     </section>e
     <!-- End Contact Section -->
 
-    <div class="modal fade" id="login">
+    <div class="modal fade" id="login" >
         <div class="modal-dialog">
-          <div class="modal-content" style="background-color: #fcfcfa;">
+          <div class="modal-content"> <!--style="opacity: 0.5 !important;">-->
             <img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/sure-care.png" class="mt-5 ml-5 mr-5">
 
             <div class="form-row mt-5 ml-5 mr-5">

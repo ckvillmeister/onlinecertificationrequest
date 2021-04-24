@@ -43,32 +43,19 @@
                   <h5><?php echo $category['description']; ?></h5>
                 </div>
                 <div class="card-body">
+                  <div class="row">
                   <?php
                     $ctr = 1;
                     foreach ($category['access_codes'] as $key => $codes):
-                        
-                      if ($ctr == 1):
-                        echo '<div class="row pt-1 pr-3 pl-3 pb-1">';
-                      endif; 
-                ?>
-                      <div class="col-sm-6">
+                  ?>
+                      <div class="col-sm-6 p-1">
                         <div class="bg-light p-2">
-                        <h5>
-                          <input type="checkbox" value="<?php echo $codes['id']; ?>" class="mr-3" <?php echo ($codes['hasaccess']) ? 'checked' : ''; ?>><?php echo $codes['description']; ?>
-                        </h5>
+                          <h5>
+                            <input type="checkbox" value="<?php echo $codes['id']; ?>" class="mr-3" <?php echo ($codes['hasaccess']) ? 'checked' : ''; ?>><?php echo $codes['description']; ?>
+                          </h5>
                         </div>
                       </div>
-                <?php
-                      
-                      if ($ctr == 2):
-                        echo '</div>';
-                      endif;
-
-                      $ctr++; 
-                      
-                      if ($ctr == 3):
-                        $ctr = 1; 
-                      endif; 
+                  <?php
                     endforeach;
                   ?>
                   </div>
@@ -77,6 +64,7 @@
             <?php
               }
             ?>
+          </div>
           <div class="row m-2">
             <div class="col-sm-12">
               <div class="float-right">

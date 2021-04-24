@@ -136,7 +136,7 @@
 	<div class="row content purpose">
 		<div class="col-lg-12">
 			<p>
-				This certification is issued upong the request of the patient and for whatever any legal purpose it may serve <?php echo (strtolower($sex) == 'male') ? 'him' : 'her'; ?> best.
+				This certification is issued upon the request of the patient and for whatever any legal purpose it may serve <?php echo (strtolower($sex) == 'male') ? 'him' : 'her'; ?> best.
 			</p>
 		</div>
 	</div>

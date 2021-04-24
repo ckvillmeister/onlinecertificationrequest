@@ -1,32 +1,33 @@
 $(document).ready(function(){
 
-var item_id = 0;
-get_checklist(1);
+var faq_id = 0;
+get_faqs(1);
 
 $('#btn_submit').click(function(e){
-  process_checklist(item_id);
-  get_checklist(1);
+  process_faq(faq_id);
+  get_faqs(1);
 });
 
-$('#btn_new_item').click(function(e){
-   $('#text_description').val('');
+$('#btn_new_faq').click(function(e){
+   $('#text_question').val('');
+   $('#text_answer').val('');
 });
 
 $('#btn_active').click(function(e){
-   get_checklist(1);
+   get_faqs(1);
 });
 
 $('#btn_trash').click(function(e){
-   get_checklist(0);
+   get_faqs(0);
 });
 
-$('body').on('click', '#btn_edit_checklistitem', function(e){
-  item_id = $(this).val();
-  get_checklistitem_info(item_id);
-  $('#modal_checklist_item_form').modal('show');
+$('body').on('click', '#btn_edit_faq', function(e){
+  faq_id = $(this).val();
+  get_faq_info(faq_id);
+  $('#modal_faq_form').modal('show');
 });
 
-$('body').on('click', '#btn_delete_checklistitem', function(e){
+$('body').on('click', '#btn_delete_faq', function(e){
   var id = $(this).val();
   $.confirm({
       title: 'Confirm',
@@ -34,8 +35,8 @@ $('body').on('click', '#btn_delete_checklistitem', function(e){
       type: 'blue',
       buttons: {
                 yes: function () {
-                  toggle_checklist_item(id, 0);
-                  get_checklist(1);
+                  toggle_faq(id, 0);
+                  get_faqs(1);
                 },
                 no: function () {
 
@@ -44,7 +45,7 @@ $('body').on('click', '#btn_delete_checklistitem', function(e){
   });
 });
 
-$('body').on('click', '#btn_activate_checklistitem', function(e){
+$('body').on('click', '#btn_activate_faq', function(e){
   var id = $(this).val();
   $.confirm({
       title: 'Confirm',
@@ -52,8 +53,8 @@ $('body').on('click', '#btn_activate_checklistitem', function(e){
       type: 'blue',
       buttons: {
                 yes: function () {
-                  toggle_checklist_item(id, 1);
-                  get_checklist(0);
+                  toggle_faq(id, 1);
+                  get_faqs(0);
                 },
                 no: function () {
 
@@ -62,34 +63,35 @@ $('body').on('click', '#btn_activate_checklistitem', function(e){
   });
 });
 
-function process_checklist(id){
+function process_faq(id){
   $.ajax({
-      url: 'checklist/process_checklist',
-        method: 'POST',
-        data: {id: id, 
-          description: $('#text_description').val()
-        },
+      url: 'process_faq',
+      method: 'POST',
+      data: {id: id, 
+            question: $('#text_question').val(),
+            answer: $('#text_answer').val()
+      },
       success: function(result) {
         if (result == 1){
           $.alert({
-              title: 'New Item',
+              title: 'Saved!',
               type: 'green',
-              content: "New checklist item added!",
+              content: "New FAQ added!",
               buttons: {
                         ok: function () {
-                          $('#modal_checklist_item_form').modal('hide');
+                          $('#modal_faq_form').modal('hide');
                         }
               }
           });
         }
         else if (result == 2){
           $.alert({
-              title: 'Item Updated',
+              title: 'Updated!',
               type: 'green',
-              content: "Checklist item updated!",
+              content: "FAQ updated!",
               buttons: {
                         ok: function () {
-                          $('#modal_checklist_item_form').modal('hide');
+                          $('#modal_faq_form').modal('hide');
                         }
               }
           });
@@ -108,18 +110,18 @@ function process_checklist(id){
               type: 'red',
               content: err + ": " + obj.toString() + " " + ex,
           });
-    }
+      }
   })
 }
 
-function get_checklist(status){
+function get_faqs(status){
   $.ajax({
-      url: 'checklist/get_checklist',
+      url: 'get_faqs',
         method: 'POST',
         data: {status: status},
         dataType: 'html',
       success: function(result) {
-        $('#checklist').html(result);
+        $('#faqs_list').html(result);
       },
       error: function(obj, err, ex){
         $.alert({
@@ -131,14 +133,15 @@ function get_checklist(status){
   })
 }
 
-function get_checklistitem_info(id){
+function get_faq_info(id){
   $.ajax({
-      url: 'checklist/get_checklistitem_info',
+      url: 'get_faq_info',
         method: 'POST',
         data: {id: id},
         dataType: 'JSON',
       success: function(result) {
-        $('#text_description').val(result['description']);
+        $('#text_question').val(result['question']);
+        $('#text_answer').val(result['answer']);
       },
       error: function(obj, err, ex){
         $.alert({
@@ -150,9 +153,9 @@ function get_checklistitem_info(id){
   })
 }
 
-function toggle_checklist_item(id, status){
+function toggle_faq(id, status){
   $.ajax({
-      url: 'checklist/toggle_checklist_item',
+      url: 'toggle_faq',
         method: 'POST',
         data: {id: id, status: status},
         dataType: 'html',

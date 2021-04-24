@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-striped display nowrap bg-white" id="table_access_role_list">
+<table class="table table-sm table-bordered table-striped display bg-white" id="table_access_role_list">
   <thead>
     <tr>
       <th class="text-center">#</th>
@@ -42,3 +42,14 @@
 	?>    
   </tbody>
 </table>
+
+<script type="text/javascript">
+  var table = $('#table_access_role_list').DataTable({
+    "ordering": false,
+    styles: {
+      tableHeader: {
+        fontSize: 8
+      }
+    }
+  });
+</script>

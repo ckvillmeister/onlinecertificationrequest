@@ -22,7 +22,7 @@ $new_reqs = count($transaction_model->get_requests(1));
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
-  <a href="<?php echo ROOT; ?>main" class="brand-link"> 
+  <a href="<?php echo ROOT; ?>dashboard" class="brand-link"> 
     <!-- <div class="text-center"> -->
       <img src="<?php echo ROOT.$imgurl['desc']; ?>" class="brand-image img-circle elevation-3 mr-3">
       <span class="brand-text font-weight-light">

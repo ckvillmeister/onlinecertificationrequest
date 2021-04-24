@@ -9,22 +9,26 @@ $(document).ready(function(){
         method: 'POST',
         success: function(result) {
           if (result == 1){
-            $('#modal_message_box').modal('show');
-            $('#modal_message_box #modal_title').html("Backed-up");
-            $('#modal_message_box #modal_body').html("Your database has been backed-up!");
-            setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+            $.alert({
+                title: 'Backed-up',
+                type: 'green',
+                content: "Your database has been backed-up!",
+            });
           }
           else{
-            $('#modal_message_box #modal_title').html("Error");
-            $('#modal_message_box #modal_body').html("Error during processing!");
-            setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+            $.alert({
+                title: 'Error!',
+                type: 'red',
+                content: "Error database back-up!",
+            });
           }
         },
         error: function(obj, err, ex){
-          $('#modal_message_box').modal('show');
-          $('#modal_message_box #modal_title').html("Error");
-          $('#modal_message_box #modal_body').html(err + ": " + obj.toString() + " " + ex);
-          setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+          $.alert({
+              title: 'Error!',
+              type: 'red',
+              content: err + ": " + obj.toString() + " " + ex,
+          });
       }
     })
   });
@@ -46,22 +50,26 @@ $(document).ready(function(){
         data: form_data,
         success: function(result) {
           if (result == 1){
-            $('#modal_message_box').modal('show');
-            $('#modal_message_box #modal_title').html("Image");
-            $('#modal_message_box #modal_body').html("Image has been saved!");
-            setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+            $.alert({
+                title: 'Backed-up',
+                type: 'green',
+                content: "Image has been saved!",
+            });
           }
           else{
-            $('#modal_message_box #modal_title').html("Error");
-            $('#modal_message_box #modal_body').html("Error during saving image!");
-            setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+            $.alert({
+                title: 'Error!',
+                type: 'red',
+                content: "Error during saving image!",
+            });
           }
         },
         error: function(obj, err, ex){
-          $('#modal_message_box').modal('show');
-          $('#modal_message_box #modal_title').html("Error");
-          $('#modal_message_box #modal_body').html(err + ": " + obj.toString() + " " + ex);
-          setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+          $.alert({
+              title: 'Error!',
+              type: 'red',
+              content: err + ": " + obj.toString() + " " + ex,
+          });
       }
     })
   });
@@ -82,22 +90,26 @@ $(document).ready(function(){
         method: 'POST',
         success: function(result) {
           if (result == 1){
-            $('#modal_message_box').modal('show');
-            $('#modal_message_box #modal_title').html("Saved");
-            $('#modal_message_box #modal_body').html("Your new settings has been saved!");
-            setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+            $.alert({
+                title: 'Saved',
+                type: 'green',
+                content: "Your new settings has been saved!",
+            });
           }
           else{
-            $('#modal_message_box #modal_title').html("Error");
-            $('#modal_message_box #modal_body').html("Error during saving!");
-            setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+            $.alert({
+                title: 'Error!',
+                type: 'red',
+                content: "Error during saving!",
+            });
           }
         },
         error: function(obj, err, ex){
-          $('#modal_message_box').modal('show');
-          $('#modal_message_box #modal_title').html("Error");
-          $('#modal_message_box #modal_body').html(err + ": " + obj.toString() + " " + ex);
-          setTimeout(function(){ $('#modal_message_box').modal('hide'); }, 3000);
+          $.alert({
+              title: 'Error!',
+              type: 'red',
+              content: err + ": " + obj.toString() + " " + ex,
+          });
       }
     })
   }

@@ -40,13 +40,7 @@
               </div>
             </div>
 
-            <div class="row p-3 shadow-none ml-3 mr-3 mb-3 bg-light rounded">
-              <div class="col-lg-12 align-self-center">
-                
-                <div id="checklist">
-                </div>
-
-              </div>
+            <div id="checklist" class="ml-3 mr-3 mb-3">
             </div>
 
           </div>    

@@ -37,12 +37,12 @@
                   <!-- small box -->
                   <div class="small-box bg-info">
                     <div class="inner">
-                      <h3></h3>
+                      <h3><?php echo ($data['new']) ? count($data['new']) : 0; ?></h3>
 
-                      <p>New Request/s</p>
+                      <p>New Requests</p>
                     </div>
                     <div class="icon">
-                      <i class="fas fa-users"></i>
+                      <i class="fas fa-file-medical-alt"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                   </div>
@@ -52,12 +52,12 @@
                   <!-- small box -->
                   <div class="small-box bg-success">
                     <div class="inner">
-                      <h3></h3>
+                      <h3><?php echo ($data['pending']) ? count($data['pending']) : 0; ?></h3>
 
-                      <p>Total Requests</p>
+                      <p>Total Pending Requests</p>
                     </div>
                     <div class="icon">
-                      <i class="fas fa-user-check"></i>
+                      <i class="fas fa-file-medical-alt"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                   </div>
@@ -67,12 +67,12 @@
                   <!-- small box -->
                   <div class="small-box bg-warning">
                     <div class="inner">
-                      <h3></h3>
+                      <h3><?php echo ($data['printed']) ? count($data['printed']) : 0; ?></h3>
 
-                      <p>Total Processed Request</p>
+                      <p>Total Printed Requests</p>
                     </div>
                     <div class="icon">
-                      <i class="fas fa-user-alt-slash"></i>
+                      <i class="fas fa-print"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                   </div>
@@ -82,12 +82,12 @@
                   <!-- small box -->
                   <div class="small-box bg-danger">
                     <div class="inner">
-                      <h3></h3>
+                      <h3><?php echo ($data['unprinted']) ? count($data['unprinted']) : 0; ?></h3>
 
-                      <p>Total Users</p>
+                      <p>Total Unprinted Requests</p>
                     </div>
                     <div class="icon">
-                      <i class="fas fa-user-minus"></i>
+                      <i class="fas fa-print"></i>
                     </div>
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                   </div>
@@ -101,14 +101,13 @@
                 <div class="card">
                 <div class="card-header border-0">
                   <div class="d-flex justify-content-between">
-                    <h3 class="card-title">Request Graph</h3>
+                    <h3 class="card-title">Number of Requests Per Month</h3>
                   </div>
                 </div>
                 <div class="card-body">
                   <div class="d-flex">
                     <p class="d-flex flex-column">
                       <span class="text-bold text-lg"></span>
-                      <span>Request Per Month</span>
                     </p>
                     <p class="ml-auto d-flex flex-column text-right">
                       <!--<span class="text-success">
@@ -120,7 +119,7 @@
                   <!-- /.d-flex -->
 
                   <div class="position-relative mb-4">
-                    <canvas id="supporters-chart" height="400"></canvas>
+                    <canvas id="request-chart" height="400"></canvas>
                   </div>
 
                 </div>
@@ -157,9 +156,9 @@
 <script type="text/javascript">
 $(function() {
 
-  per_barangay_supporters();
+  request_per_month();
 
-  function per_barangay_supporters(){
+  function request_per_month(){
     'use strict'
 
     var ticksStyle = {
@@ -170,16 +169,15 @@ $(function() {
     var mode      = 'index'
     var intersect = true
 
-    var $supporters_chart = $('#supporters-chart')
-    var supporters_chart  = new Chart($supporters_chart, {
-      type   : 'bar',
+    var request_chart = $('#request-chart')
+    var new_request_chart  = new Chart(request_chart, {
+      type   : 'line',
       data   : {
-        labels  : <?php echo json_encode($data['barangays']); ?>,
+        labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         datasets: [
           {
-            backgroundColor: '#007bff',
             borderColor    : '#007bff',
-            data           : <?php echo json_encode($data['total_supporters_per_brgy']); ?>
+            data           :  <?php echo json_encode($data['request_per_month']); ?>
           }
         ]
       },
