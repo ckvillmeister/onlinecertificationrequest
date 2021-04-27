@@ -216,7 +216,7 @@ class transactionModel extends model{
 		return $requests;
 	}
 
-	public function get_filtered_requests($printstat, $symptomstat){
+	public function get_filtered_requests($date, $printstat, $symptomstat){
 		$db = new database();
 		$this->con = $db->connection();
 		$requests = array();
@@ -291,6 +291,80 @@ class transactionModel extends model{
 			}
 
 			$stmt->close();
+		}
+		else{
+			if ($date){
+				$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status = 3";
+				$new_date = date('Y-m-d', strtotime($date));
+
+				if ($date){
+					$query .= " AND DATE(request_date) = '".$new_date."'";
+				}
+
+				$stmt = $this->con->prepare($query);
+				$stmt->execute();
+				$stmt->bind_result($id, $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact_number, $request_date, $pickup_date, $status);
+
+				while ($stmt->fetch()) {
+					if (!($symptomstat)){
+						$requests[] = array('id' => $id,
+										'firstname' => $firstname, 
+										'middlename' => $middlename, 
+										'lastname' => $lastname, 
+										'extension' => $extension, 
+										'address' => $address,
+										'sex' => $sex,
+										'dob' => $dob,  
+										'contact_number' => $contact_number,
+										'request_date' => $request_date,
+										'pickup_date' => $pickup_date,
+										'status' => $status);
+					}
+					else{
+						$qry = "SELECT * FROM tbl_requesting_patient_symptoms WHERE request_id = ".$id;
+						$conn = $db->connection();
+						$stmt2 = $conn->prepare($qry);
+						$stmt2->execute();
+						$result = $stmt2->get_result();
+			
+						if ($symptomstat == 1){
+							if ($result->num_rows <= 0){
+								$requests[] = array('id' => $id,
+										'firstname' => $firstname, 
+										'middlename' => $middlename, 
+										'lastname' => $lastname, 
+										'extension' => $extension, 
+										'address' => $address,
+										'sex' => $sex,
+										'dob' => $dob,  
+										'contact_number' => $contact_number,
+										'request_date' => $request_date,
+										'pickup_date' => $pickup_date,
+										'status' => $status);
+							}
+						}
+						elseif ($symptomstat == 2){
+							if ($result->num_rows >= 1){
+								$requests[] = array('id' => $id,
+										'firstname' => $firstname, 
+										'middlename' => $middlename, 
+										'lastname' => $lastname, 
+										'extension' => $extension, 
+										'address' => $address,
+										'sex' => $sex,
+										'dob' => $dob,  
+										'contact_number' => $contact_number,
+										'request_date' => $request_date,
+										'pickup_date' => $pickup_date,
+										'status' => $status);
+							}
+						}
+						
+					}
+				}
+
+				$stmt->close();
+			}
 		}
 
 		

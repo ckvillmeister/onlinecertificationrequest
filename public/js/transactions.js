@@ -44,16 +44,20 @@ $(document).ready(function(){
     //get_requests(3);
     $('#request_list').html('');
     $('#control_buttons').html('<div class="row">' +
-                                  '<div class="col-lg-3">' +
-                                    '<select id="cbo_printstat" class="form-control form-control-sm mr-2">' +
+                                  '<div class="col-lg-1"><span style="font-size:9pt">Request Date:</span></div>' +
+                                  '<div class="col-lg-2">' +
+                                    '<input type="date" id="text_date" class="form-control form-control-sm mr-2 mb-2">' + 
+                                  '</div>' +
+                                  '<div class="col-lg-2">' +
+                                    '<select id="cbo_printstat" class="form-control form-control-sm mr-2 mb-2">' +
                                       '<option value=""> [ Print Status ] </option>' +
                                       '<option value="1">Not Printed</option>' +
                                       '<option value="2">Printed</option>' +
                                       '<option value="3">All</option>' +
                                     '</select>' +
                                   '</div>' +
-                                  '<div class="col-lg-3">' +
-                                    '<select id="cbo_symptomstat" class="form-control form-control-sm mr-2">' +
+                                  '<div class="col-lg-2">' +
+                                    '<select id="cbo_symptomstat" class="form-control form-control-sm mr-2 mb-2">' +
                                       '<option value=""> [ Symptom Status ] </option>' +
                                       '<option value="1">Without Symptoms</option>' +
                                       '<option value="2">With Symptoms</option>' +
@@ -67,10 +71,11 @@ $(document).ready(function(){
   });
 
   $('body').on('click', '#btn_filter', function(){
-    var printstat = $('#cbo_printstat').val(), 
+    var date = $('#text_date').val(),
+        printstat = $('#cbo_printstat').val(), 
         symptomstat = $('#cbo_symptomstat').val();
 
-    get_filtered_requests(printstat, symptomstat);
+    get_filtered_requests(date, printstat, symptomstat);
   });
 
   //Reject Request
@@ -542,11 +547,11 @@ $(document).ready(function(){
     })
   }
 
-  function get_filtered_requests(printstat, symptomstat){
+  function get_filtered_requests(date, printstat, symptomstat){
     $.ajax({
         url: 'get_filtered_requests',
           method: 'POST',
-          data: {printstat: printstat, symptomstat: symptomstat},
+          data: {date: date, printstat: printstat, symptomstat: symptomstat},
           dataType: 'html',
         beforeSend: function() {
           $('.overlay-wrapper').html('<div class="overlay">' +

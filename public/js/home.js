@@ -1,13 +1,5 @@
 $(document).ready(function(){
 
-	check();
-
-	function check(){
-		if ($('body').child().hasClass('mobile-nav-toggle')){
-			alert("HELLO");
-		}
-	}
-
 	$('#btn_login').click(function(e){
 		var username = $('#text_username').val(),
 			password = $('#text_password').val(),
@@ -71,8 +63,7 @@ $(document).ready(function(){
 			pickupdate = $('#text_pickupdate').val(),
 			error = false;
 
-		if ($('body').hasClass('mobile-nav-toggle')) {
-			alert("naa");
+		if ($( window ).width() < 992) {
 			if (firstname == '' | lastname == ''){
 				$.alert({
 					    title: 'Empty',
@@ -261,7 +252,10 @@ $(document).ready(function(){
 					 '</div>' +
 					 '<div class="form-row m-2">' +
 						'<div class="col-sm-12"><strong>' + sym + '</strong></div>' +
-					'</div>',
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+						'<div class="col-sm-12"><strong>Date Privacy Notice</strong></div>' +
+					 '</div>',
 			buttons: {
 		        confirm: function () {
 		            $.ajax({

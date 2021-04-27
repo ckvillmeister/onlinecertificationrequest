@@ -465,7 +465,7 @@
     </section>e
     <!-- End Contact Section -->
 
-    <div class="modal fade" id="login" >
+    <div class="modal fade mobile-nav-overly" id="login">
         <div class="modal-dialog">
           <div class="modal-content"> <!--style="opacity: 0.5 !important;">-->
             <img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/sure-care.png" class="mt-5 ml-5 mr-5">

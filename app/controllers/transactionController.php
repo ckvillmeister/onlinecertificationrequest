@@ -66,11 +66,12 @@ class transactionController extends controller{
 	}
 
 	public function get_filtered_requests(){
+		$date = isset($_POST['date']) ? $_POST['date'] : 0;
 		$printstat = isset($_POST['printstat']) ? $_POST['printstat'] : 0;
 		$symptomstat = isset($_POST['symptomstat']) ? $_POST['symptomstat'] : 0;
 
 		$transaction_model = new transactionModel();
-		$requests = $transaction_model->get_filtered_requests($printstat, $symptomstat);
+		$requests = $transaction_model->get_filtered_requests($date, $printstat, $symptomstat);
 		
 		$this->view()->render('transaction/certification/list.php', array('requests' => $requests));
 	}
