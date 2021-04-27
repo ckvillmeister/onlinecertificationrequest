@@ -84,7 +84,7 @@
       }
     });
   });
-
+  
   // Mobile Navigation
   if ($('.nav-menu').length) {
     var $mobile_nav = $('.nav-menu').clone().prop({

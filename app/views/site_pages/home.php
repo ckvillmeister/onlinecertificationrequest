@@ -68,7 +68,6 @@
           <li><a href="#" id="login_link">Login</a></li>
         </ul>
       </nav><!-- .nav-menu -->
-
       <a href="#appointment" class="appointment-btn scrollto">Request Certificate</a>
 
     </div>
@@ -199,7 +198,7 @@
               <div class="validate"></div>
             </div>
             <div class="col-md-3 form-group">
-              <input type="tel" class="form-control" name="phone" id="text_lastname" placeholder="Last Name" data-rule="minlen:1" data-msg="Please enter your last name">
+              <input type="text" class="form-control" name="phone" id="text_lastname" placeholder="Last Name" data-rule="minlen:1" data-msg="Please enter your last name">
               <div class="error-message-lastname"></div>
             </div>
             <div class="col-md-3 form-group">
@@ -543,6 +542,7 @@
   <script src="<?php echo ROOT; ?>public/js/home.js"></script>
   <script type="text/javascript">
     $('#login_link').click(function(){
+      //$('body').toggleClass('mobile-nav-active');
       setTimeout(function() { $('#text_username').focus() }, 500);
       $('#login').modal({
                         backdrop: 'static',

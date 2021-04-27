@@ -1,5 +1,13 @@
 $(document).ready(function(){
 
+	check();
+
+	function check(){
+		if ($('body').child().hasClass('mobile-nav-toggle')){
+			alert("HELLO");
+		}
+	}
+
 	$('#btn_login').click(function(e){
 		var username = $('#text_username').val(),
 			password = $('#text_password').val(),
@@ -63,64 +71,93 @@ $(document).ready(function(){
 			pickupdate = $('#text_pickupdate').val(),
 			error = false;
 
-		if (firstname == ''){
-			$('.error-message-firstname').html("<span id='message'>Please enter your first name!</span>");
-			$('.error-message-firstname').addClass("text-danger");
-			error = true;
+		if ($('body').hasClass('mobile-nav-toggle')) {
+			alert("naa");
+			if (firstname == '' | lastname == ''){
+				$.alert({
+					    title: 'Empty',
+					    type: 'red',
+					    content: 'Please provide your fullname!',
+					});
+				error = true;
+			}
+			else if (muncity == '' | brgy == '' | purok == ''){
+				$.alert({
+					    title: 'Empty',
+					    type: 'red',
+					    content: 'Please provide your address!',
+					});
+				error = true;
+			}
+			else if(contact == ''){
+				$.alert({
+					    title: 'Empty',
+					    type: 'red',
+					    content: 'Please provide your contact number!',
+					});
+				error = true;
+			}
 		}
 		else{
-			$('.error-message-firstname').html("<span id='message'></span>");
-			$('.error-message-firstname').addClass("text-success");
-		}
+			if (firstname == ''){
+				$('.error-message-firstname').html("<span id='message'>Please enter your first name!</span>");
+				$('.error-message-firstname').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-firstname').html("<span id='message'></span>");
+				$('.error-message-firstname').addClass("text-success");
+			}
 
-		if(lastname == ''){
-			$('.error-message-lastname').html("<span id='message'>Please enter your last name!</span>");
-			$('.error-message-lastname').addClass("text-danger");
-			error = true;
-		}
-		else{
-			$('.error-message-lastname').html("<span id='message'></span>");
-			$('.error-message-lastname').addClass("text-success");
-		}
+			if(lastname == ''){
+				$('.error-message-lastname').html("<span id='message'>Please enter your last name!</span>");
+				$('.error-message-lastname').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-lastname').html("<span id='message'></span>");
+				$('.error-message-lastname').addClass("text-success");
+			}
 
-		if(muncity == ''){
-			$('.error-message-addrmuncity').html("<span id='message'>Please select a municipality!</span>");
-			$('.error-message-addrmuncity').addClass("text-danger");
-			error = true;
-		}
-		else{
-			$('.error-message-addrmuncity').html("<span id='message'></span>");
-			$('.error-message-addrmuncity').addClass("text-success");
-		}
+			if(muncity == ''){
+				$('.error-message-addrmuncity').html("<span id='message'>Please select a municipality!</span>");
+				$('.error-message-addrmuncity').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-addrmuncity').html("<span id='message'></span>");
+				$('.error-message-addrmuncity').addClass("text-success");
+			}
 
-		if(brgy == ''){
-			$('.error-message-addrbrgy').html("<span id='message'>Please select a barangay!</span>");
-			$('.error-message-addrbrgy').addClass("text-danger");
-			error = true;
-		}
-		else{
-			$('.error-message-addrbrgy').html("<span id='message'></span>");
-			$('.error-message-addrbrgy').addClass("text-success");
-		}
+			if(brgy == ''){
+				$('.error-message-addrbrgy').html("<span id='message'>Please select a barangay!</span>");
+				$('.error-message-addrbrgy').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-addrbrgy').html("<span id='message'></span>");
+				$('.error-message-addrbrgy').addClass("text-success");
+			}
 
-		if(purok == ''){
-			$('.error-message-addrpurok').html("<span id='message'>Please select a purok!</span>");
-			$('.error-message-addrpurok').addClass("text-danger");
-			error = true;
-		}
-		else{
-			$('.error-message-addrpurok').html("<span id='message'></span>");
-			$('.error-message-addrpurok').addClass("text-success");
-		}
+			if(purok == ''){
+				$('.error-message-addrpurok').html("<span id='message'>Please select a purok!</span>");
+				$('.error-message-addrpurok').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-addrpurok').html("<span id='message'></span>");
+				$('.error-message-addrpurok').addClass("text-success");
+			}
 
-		if(contact == ''){
-			$('.error-message-contactno').html("<span id='message'>Please enter your contact number!</span>");
-			$('.error-message-contactno').addClass("text-danger");
-			error = true;
-		}
-		else{
-			$('.error-message-contactno').html("<span id='message'></span>");
-			$('.error-message-contactno').addClass("text-success");
+			if(contact == ''){
+				$('.error-message-contactno').html("<span id='message'>Please enter your contact number!</span>");
+				$('.error-message-contactno').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-contactno').html("<span id='message'></span>");
+				$('.error-message-contactno').addClass("text-success");
+			}
 		}
 
 		if (error == false){
@@ -173,9 +210,7 @@ $(document).ready(function(){
 		$.each(symptoms , function(i, val) { 
 			$.each(val , function(index, value) { 
 				if (index == 1){	
-					sym += '<div class="form-row m-2">' +
-								'<div class="col-sm-12"><strong>' + '- ' + value + '</strong></div>' +
-							'</div>';
+					sym += value + ", ";
 				}
 				else{
 					sym_val[ctr] = value;
@@ -186,8 +221,11 @@ $(document).ready(function(){
 
 		if (sym == ''){
 			sym = '<div class="form-row m-2">' +
-						'<div class="col-sm-12"><strong>None</strong></div>' +
+						'<div class="col-sm-4"><strong>None</strong></div>' +
 					'</div>';
+		}
+		else{
+			sym = sym.substring(0, sym.length - 2);
 		}
 
 		$.confirm({
@@ -220,7 +258,10 @@ $(document).ready(function(){
 					 '</div><br>' +
 					 '<div class="form-row m-2">' +
 					 	'<div class="col-sm-2">Symptoms: </div>'+
-					 '</div>' + sym,
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+						'<div class="col-sm-12"><strong>' + sym + '</strong></div>' +
+					'</div>',
 			buttons: {
 		        confirm: function () {
 		            $.ajax({

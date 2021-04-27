@@ -19,9 +19,7 @@
 -- Current Database: `clinic_db`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `clinic_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
-USE `clinic_db`;
 
 --
 -- Table structure for table `tbl_access_category`
