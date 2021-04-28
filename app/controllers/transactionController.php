@@ -107,6 +107,13 @@ class transactionController extends controller{
 		echo json_encode($note);
 	}
 
+	public function get_symptoms(){
+		$id = isset($_POST['id']) ? $_POST['id'] : 0;
+
+		$transaction_model = new transactionModel();
+		$symptoms = $transaction_model->get_patient_symptoms($id);
+		echo json_encode($symptoms);
+	}
 
 	public function update_cert_req(){
 		$id = isset($_POST['id']) ? $_POST['id'] : '';

@@ -232,7 +232,7 @@
             </div>
             <div class="col-md-3 form-group">
               <input type="datetime" name="text_pickupdate" class="form-control datepicker" id="text_pickupdate" placeholder="Pick-up Date" data-rule="minlen:4" data-msg="Please select pick-up date">
-              <div class="validate"></div>
+              <div class="error-message-pickupdate"></div>
             </div>
           </div>
           <div class="form-row">
@@ -279,8 +279,8 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="col-md-12 text-info">
-              <p>Please check if you're experiencing the following: </p>
+            <div class="col-md-12 text-dark">
+              <p><strong>Please check if you're experiencing the following: </strong></p>
             </div>
           </div>
           <div class="form-row" id="symptoms_checklist">
@@ -288,8 +288,11 @@
               foreach ($data['checklist'] as $key => $symptom) {
             ?>
               <div class="col-md-4 p-1">
-                <div class="bg-light p-1">
-                  <h5><input type="checkbox" class="align-middle ml-2 mr-4" value="<?php echo $symptom['id']; ?>" data-desc="<?php echo $symptom['desc']; ?>"><?php echo $symptom['desc']; ?></h5>
+                <div class="bg-light">
+                  <h6>
+                    <input type="checkbox" class="align-middle ml-3 mr-2" value="<?php echo $symptom['id']; ?>" data-desc="<?php echo $symptom['desc']; ?>">
+                    <?php echo $symptom['desc']; ?>
+                  </h6>
                 </div>
               </div>
             <?php

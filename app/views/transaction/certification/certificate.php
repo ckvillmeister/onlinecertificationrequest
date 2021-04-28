@@ -3,6 +3,10 @@
 	  -webkit-print-color-adjust: exact !important;
 	}
 
+	p{
+		font-family: 'Calibri';
+	}
+
 	.content{
 		font-size: 20pt;
 	}
@@ -69,8 +73,15 @@
 ?>
 <div class="wrapper">
 	<div class="row">
+		<div class="col-sm-2">
+			<img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/med_logo.png" height="200" width="200">
+		</div>
+		<div class="col-sm-10">
+			<img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/sure-care.png" >
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-lg-12 text-center">
-			<img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/sure-care.png" class="">
 			<h4><strong><?php echo $settings['Business Address']['desc']; ?></strong></h4>
 			<h4><strong><?php echo $settings['E-mail Address']['desc']; ?></strong></h4>
 			<hr class="line">
@@ -114,7 +125,7 @@
 	<div class="row content info">
 		<div class="col-lg-12">
 			<p>
-				This is to certify that <strong><?php echo $fullname; ?></strong>, <strong><?php echo $age; ?></strong> years old, <strong><?php echo $sex; ?></strong>, and a resident of <strong><?php echo $address; ?></strong>, was seen and examined by the undersigned in this clinic on, with the following findings as per record available:
+				This is to certify that <strong><?php echo $fullname; ?></strong>, <strong><?php echo $age; ?></strong> years old, <strong><?php echo $sex; ?></strong>, and a resident of <strong><?php echo $address; ?></strong>, was seen and examined by the undersigned in this clinic on <strong><?php echo date('F j, Y'); ?></strong>, with the following findings as per record available:
 			</p>
 		</div>
 	</div>
@@ -149,7 +160,7 @@
 	</div>
 	<div class="row content note">
 		<div class="col-lg-12">
-			<br><br>
+			<br>
 			<p class="mr-3">Note:&nbsp;<?php echo ($cert['note']['note']) ? $cert['note']['note'] : "None"; ?></p>
 		</div>
 	</div>

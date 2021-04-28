@@ -93,13 +93,15 @@ class transactionModel extends model{
 			$stmt->execute();
 		}
 
-		foreach ($findings as $key => $finding) {
-			$stmt = $this->con->prepare("INSERT INTO tbl_findings (request_id, finding, added_by, date_added, status) VALUES (?, ?, ?, ?, ?)");
-			$stmt->bind_param("sssss", $id, $finding, $userid, $datetime, $status);
-			$stmt->execute();
-			$result = 1;
+		if ($findings){
+			foreach ($findings as $key => $finding) {
+				$stmt = $this->con->prepare("INSERT INTO tbl_findings (request_id, finding, added_by, date_added, status) VALUES (?, ?, ?, ?, ?)");
+				$stmt->bind_param("sssss", $id, $finding, $userid, $datetime, $status);
+				$stmt->execute();
+			}
 		}
 		
+		$result = 1;
 		$stmt->close();
 		$this->con->close();
 		return $result;
@@ -417,6 +419,32 @@ class transactionModel extends model{
 
 		$stmt->close();
 		return $note;
+	}
+
+	public function get_patient_symptoms($id, $status = 1){
+		$db = new database();
+		$this->con = $db->connection();
+
+		$query = "SELECT trps.record_id, trps.request_id, trps.symptom_id, tsc.symptoms_description
+					FROM tbl_requesting_patient_symptoms trps
+					INNER JOIN tbl_symptoms_checklist tsc ON tsc.record_id = trps.symptom_id
+					WHERE trps.request_id = ? AND trps.status = ?";
+
+		$stmt = $this->con->prepare($query);
+		$stmt->bind_param("ss", $id, $status);
+		$stmt->execute();
+		$stmt->bind_result($id, $requestid, $symp_id, $symp_desc);
+		$symptoms = array();
+
+		while ($stmt->fetch()) {
+			$symptoms[] = array('id' => $id,
+								'requestid' => $requestid, 
+								'symp_id' => $symp_id, 
+								'symp_desc' => $symp_desc);
+		}
+
+		$stmt->close();
+		return $symptoms;
 	}
 
 	public function checkSymptoms($requestid){

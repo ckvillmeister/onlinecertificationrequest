@@ -63,6 +63,9 @@ $(document).ready(function(){
 			pickupdate = $('#text_pickupdate').val(),
 			error = false;
 
+		var pdate = new Date(pickupdate).valueOf();
+		var datetoday = new Date().valueOf();
+
 		if ($( window ).width() < 992) {
 			if (firstname == '' | lastname == ''){
 				$.alert({
@@ -87,6 +90,28 @@ $(document).ready(function(){
 					    content: 'Please provide your contact number!',
 					});
 				error = true;
+			}
+			if (pickupdate == ''){
+				$.alert({
+					    title: 'Empty',
+					    type: 'red',
+					    content: 'Please select pick-up date!',
+					});
+				error = true;
+			}
+			else{
+				if (pdate <= datetoday){
+					$.alert({
+					    title: 'Empty',
+					    type: 'red',
+					    content: 'Cannot select expired or current date as pick-up date!',
+					});
+					error = true;
+				}
+				else{
+					$('.error-message-pickupdate').html("<span id='message'></span>");
+					$('.error-message-pickupdate').addClass("text-success");
+				}
 			}
 		}
 		else{
@@ -148,6 +173,23 @@ $(document).ready(function(){
 			else{
 				$('.error-message-contactno').html("<span id='message'></span>");
 				$('.error-message-contactno').addClass("text-success");
+			}
+
+			if (pickupdate == ''){
+				$('.error-message-pickupdate').html("<span id='message'>Please select pick-up date.</span>");
+				$('.error-message-pickupdate').addClass("text-danger");
+				error = true;
+			}
+			else{
+				if (pdate <= datetoday){
+					$('.error-message-pickupdate').html("<span id='message'>Cannot select expired or current date as pick-up date.</span>");
+					$('.error-message-pickupdate').addClass("text-danger");
+					error = true;
+				}
+				else{
+					$('.error-message-pickupdate').html("<span id='message'></span>");
+					$('.error-message-pickupdate').addClass("text-success");
+				}
 			}
 		}
 
@@ -276,7 +318,10 @@ $(document).ready(function(){
 				        		$.alert({
 								    title: 'Success',
 								    type: 'green',
-								    content: 'Your request has been sent!',
+								    content: 'Your request has been sent! <br>' +
+								    		'Go to Sure Care Medical Clinic located ' +
+								    		'Poblacion, Trinidad, Bohol on ' +
+								    		'to pick up your medical certificate.',
 								    buttons: {
 								        ok: function(){
 								        	location.reload();

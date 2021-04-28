@@ -139,16 +139,31 @@
 
         <div class="row p-1 shadow-none mt-3 mb-2 bg-light rounded">
           <div class="col-lg-12 text-center">
+            <strong>Symptoms</strong>
+          </div>
+        </div>
+
+        <div class="row mt-3" id="always">
+          <div class="col-lg-1 align-self-center">
+              Symptoms:
+          </div>
+          <div class="col-lg-11" id="always">
+              <input type="text" class="form-control form-control-sm" id="text_symptoms">
+          </div>
+        </div>
+
+        <div class="row p-1 shadow-none mt-3 mb-2 bg-light rounded">
+          <div class="col-lg-12 text-center">
             <strong>Findings</strong>
           </div>
         </div>
 
         <div id="findings">
           <div class="row mt-3" id="always">
-            <div class="col-lg-2 align-self-center">
-                Finding #1:
+            <div class="col-lg-1 align-self-center">
+                Finding 1:
             </div>
-            <div class="col-lg-9" id="always">
+            <div class="col-lg-10" id="always">
                 <input type="text" class="form-control form-control-sm" id="text_finding">
             </div>
             <div class="col-lg-1" id="always">

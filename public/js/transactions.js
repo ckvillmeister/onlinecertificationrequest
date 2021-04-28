@@ -63,9 +63,9 @@ $(document).ready(function(){
                                       '<option value="2">With Symptoms</option>' +
                                     '</select>' +
                                   '</div>' +
-                                  '<div class="col-lg-3">' +
-                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:110px" id="btn_filter">Filter</button>' +
-                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:110px" id="btn_print_all">Print All</button>' +
+                                  '<div class="col-lg-2">' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:75px" id="btn_filter">Filter</button>' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:75px" id="btn_print_all">Print All</button>' +
                                   '</div>' +
                                 '</div>');
   });
@@ -174,6 +174,7 @@ $(document).ready(function(){
     get_request_info(id);
     get_request_findings(id);
     get_request_note(id);
+    get_symptoms(id);
     $('#modal_view_info').modal({
                 backdrop: 'static',
                 keyboard: false
@@ -235,14 +236,14 @@ $(document).ready(function(){
       } 
     });
 
-    if (error == 1){
+    /*if (error == 1){
       $.alert({
             title: 'Error!',
             type: 'red',
             content: 'Please provide findings in the empty field!',
         });
     }
-    else{
+    else{*/
       var firstname = $('#text_firstname').val(),
       middlename = $('#text_middlename').val(),
       lastname = $('#text_lastname').val(),
@@ -285,7 +286,7 @@ $(document).ready(function(){
       else{
           update_cert_req(id, firstname, middlename, lastname, extension, address, sex, dob, contact, findings, note);
       }
-    }
+    //}
   });
 
   function get_requests(status){
@@ -397,8 +398,8 @@ $(document).ready(function(){
                 else{
                   if (key == 'finding'){
                     $('#findings').append('<div class="row mt-3">'+
-                    '<div class="col-lg-2 align-self-center">Finding #' + finding + ':</div>' +
-                    '<div class="col-lg-9"><input type="text" class="form-control form-control-sm" id="text_finding"value="'+value+'"></div>' +
+                    '<div class="col-lg-1 align-self-center">Finding ' + finding + ':</div>' +
+                    '<div class="col-lg-10"><input type="text" class="form-control form-control-sm" id="text_finding"value="'+value+'"></div>' +
                     '<div class="col-lg-1"><button class="btn btn-sm btn-danger" id="btn_remove_finding"><i class="fas fa-times"></i></button></div>' +
                     '</div>');
                     finding++;
@@ -426,6 +427,32 @@ $(document).ready(function(){
           dataType: 'JSON',
         success: function(result) {
           $('#text_note').val(result['note']);
+        },
+        error: function(obj, err, ex){
+          $.alert({
+              title: 'Error!',
+              content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
+          });
+      }
+    })
+  }
+
+  function get_symptoms(id){
+    $.ajax({
+        url: 'get_symptoms',
+          method: 'POST',
+          data: {id: id},
+          dataType: 'JSON',
+        success: function(result) {
+          $.each(result, function(key, value) {
+            if ($('#text_symptoms').val() == ''){
+              $('#text_symptoms').val(value['symp_desc']);
+            }
+            else{
+              $('#text_symptoms').val($('#text_symptoms').val() + ", " + value['symp_desc']);
+            }
+          });
         },
         error: function(obj, err, ex){
           $.alert({
