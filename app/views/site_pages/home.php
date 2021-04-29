@@ -92,7 +92,7 @@
         <div class="row">
           <div class="col-lg-4 d-flex align-items-stretch">
             <div class="content">
-              <h3><?php echo ($data['settings']['Business Name']['desc']) ? $data['settings']['Business Name']['desc'] : "" ; ?></h3>
+              <h3 id="biz_name"><?php echo ($data['settings']['Business Name']['desc']) ? $data['settings']['Business Name']['desc'] : "" ; ?></h3>
               <p>
                 <?php echo ($data['settings']['Clinic Doctor']['desc']) ? $data['settings']['Clinic Doctor']['desc'] : "" ; ?>
               </p>
@@ -104,27 +104,31 @@
           <div class="col-lg-8 d-flex align-items-stretch">
             <div class="icon-boxes d-flex flex-column justify-content-center">
               <div class="row">
+
                 <div class="col-xl-4 d-flex align-items-stretch">
                   <div class="icon-box mt-4 mt-xl-0">
-                    <i class="bx bx-receipt"></i>
-                    <h4>Corporis voluptates sit</h4>
-                    <p>Consequuntur sunt aut quasi enim aliquam quae harum pariatur laboris nisi ut aliquip</p>
+                    <i class="bx bx-cloud-upload"></i>
+                    <h4>Online Medical Certificate Request</h4>
+                    <p>Request medical certificate through online</p>
                   </div>
                 </div>
+
                 <div class="col-xl-4 d-flex align-items-stretch">
                   <div class="icon-box mt-4 mt-xl-0">
-                    <i class="bx bx-cube-alt"></i>
-                    <h4>Ullamco laboris ladore pan</h4>
-                    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt</p>
+                    <i class="bx bx-current-location"></i>
+                    <h4>Location</h4>
+                    <p><?php echo ($data['settings']['Business Address']['desc']) ? $data['settings']['Business Address']['desc'] : "" ; ?> beside Cebuana Lhuiller Pawnshop</p>
                   </div>
                 </div>
+
                 <div class="col-xl-4 d-flex align-items-stretch">
                   <div class="icon-box mt-4 mt-xl-0">
-                    <i class="bx bx-images"></i>
-                    <h4>Labore consequatur</h4>
-                    <p>Aut suscipit aut cum nemo deleniti aut omnis. Doloribus ut maiores omnis facere</p>
+                    <i class="bx bx-time"></i>
+                    <h4><?php echo ($data['settings']['Clinic Schedule']['name']) ? $data['settings']['Clinic Schedule']['name'] : "" ; ?></h4>
+                    <p><?php echo ($data['settings']['Clinic Schedule']['desc']) ? $data['settings']['Clinic Schedule']['desc'] : "" ; ?></p>
                   </div>
                 </div>
+
               </div>
             </div><!-- End .content-->
           </div>
@@ -153,23 +157,23 @@
               
             </p>
 
-            <div class="icon-box">
-              <div class="icon"><i class="bx bx-fingerprint"></i></div>
-              <h4 class="title"><a href="">Lorem Ipsum</a></h4>
-              <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
-            </div>
-
-            <div class="icon-box">
-              <div class="icon"><i class="bx bx-gift"></i></div>
-              <h4 class="title"><a href="">Nemo Enim</a></h4>
-              <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
-            </div>
-
-            <div class="icon-box">
-              <div class="icon"><i class="bx bx-atom"></i></div>
-              <h4 class="title"><a href="">Dine Pad</a></h4>
-              <p class="description">Explicabo est voluptatum asperiores consequatur magnam. Et veritatis odit. Sunt aut deserunt minus aut eligendi omnis</p>
-            </div>
+            <?php 
+              $ctr = 0;
+              $icofont = '';
+              foreach ($data['services'] as $key => $service) {
+            ?>
+                <div class="icon-box">
+                  <div class="icon"><i class="bx bx-tag-alt"></i></div>
+                  <h4 class="title"><a href=""><?php echo $service['name']; ?></a></h4>
+                  <p class="description"><?php echo $service['desc']; ?></p>
+                </div>
+            <?php
+                $ctr++;
+                if ($ctr == 3){
+                  break;
+                }
+              }
+            ?>
 
           </div>
         </div>
@@ -260,7 +264,8 @@
               <div class="error-message-addrbrgy"></div>
             </div>
             <div class="col-md-3 form-group">
-              <select id="cbo_purok" class="form-control">
+              <input list="puroks" class="form-control" id="cbo_purok">
+              <datalist id="puroks">
                 <option value=""> [ Purok ] </option>
                 <option value="Purok 1"> Purok 1 </option>
                 <option value="Purok 2"> Purok 2 </option>
@@ -269,10 +274,28 @@
                 <option value="Purok 5"> Purok 5 </option>
                 <option value="Purok 6"> Purok 6 </option>
                 <option value="Purok 7"> Purok 7 </option>
-              </select>
+              </datalist>
               <div class="error-message-addrpurok"></div>
             </div>
           </div>
+          <div class="form-row">
+            <div class="col-md-6 text-center">
+              <select id="cbo_schools" class="form-control">
+                <option value=""> [ School ] - <i>For Students</i> </option>
+                <?php
+                  foreach ($data['schools'] as $key => $school) {
+                    echo "<option data-id='".$school['id']."' value='".ucwords(strtolower($school['school']))."'>".ucwords(strtolower($school['school']))."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+            <div class="col-md-6 text-center">
+              <select id="cbo_courses" class="form-control">
+                <option value=""> [ Course ] - <i>For Students</i> </option>
+              </select>
+            </div>
+          </div>
+          <br>
           <div class="form-row">
             <div class="col-md-12 text-center">
               <h5><strong>Symptoms Checklist</strong></h5>
@@ -319,7 +342,21 @@
         </div>
 
         <div class="row">
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+
+          <?php 
+              foreach ($data['services'] as $key => $service) {
+            ?>
+              <div class="col-sm-4 mb-4">
+                <div class="icon-box">
+                  <div class="icon"><i class="icofont-heart-beat"></i></div>
+                  <h4><a><?php echo $service['name']; ?></a></h4>
+                  <p><?php echo $service['desc']; ?> </p>
+                </div>
+              </div>
+            <?php
+              }
+            ?>
+          <!--<div class="col-lg-4 col-md-6 d-flex align-items-stretch">
             <div class="icon-box">
               <div class="icon"><i class="icofont-heart-beat"></i></div>
               <h4><a href="">Lorem Ipsum</a></h4>
@@ -341,7 +378,7 @@
               <h4><a href="">Magni Dolores</a></h4>
               <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia</p>
             </div>
-          </div>
+          </div>-->
 
         </div>
 
@@ -468,7 +505,7 @@
     </section>e
     <!-- End Contact Section -->
 
-    <div class="modal fade mobile-nav-overly" id="login">
+      <div class="modal fade mobile-nav-overly" id="login">
         <div class="modal-dialog">
           <div class="modal-content"> <!--style="opacity: 0.5 !important;">-->
             <img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/sure-care.png" class="mt-5 ml-5 mr-5">
@@ -500,6 +537,28 @@
         </div>
         <!-- /.modal-dialog -->
       </div>
+
+      <div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header card-info card-outline">
+              <h5 class="modal-title" id="modal_title">Confirm</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="modal_confirm_content">
+            </div>
+            <div class="modal-footer"> 
+              <div class="float-right">
+                <button class="btn btn-sm btn-primary mr-2" id="btn_confirm">Confirm</button>
+                <button class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
   </main>
   <!-- End #main -->
 
@@ -513,7 +572,7 @@
           <strong><span><?php echo ($data['settings']['Business Name']['desc']) ? $data['settings']['Business Name']['desc'] : "" ; ?></span></strong>. 
         </div>
         <div class="credits">
-          Credits to <a href="https://bootstrapmade.com/">BootstrapMade</a>
+          Credits to <a href="https://bootstrapmade.com/">BootstrapMade</a> and <a href="https://adminlte.io/">AdminLTE</a>
         </div>
       </div>
       <div class="social-links text-center text-md-right pt-3 pt-md-0">

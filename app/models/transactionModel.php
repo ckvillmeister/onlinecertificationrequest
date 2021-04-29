@@ -9,7 +9,7 @@ class transactionModel extends model{
 		$this->con = $db->connection();
 	}
 
-	public function process_request($firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $pickupdate, $symptoms){
+	public function process_request($firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $pickupdate, $school_course, $symptoms){
 		$status = 1;
 		$result = 0;
 		$datetime = date("Y-m-d h:i:s");
@@ -18,8 +18,8 @@ class transactionModel extends model{
 		$this->con = $db->connection();
 		
 		//Save Request
-		$stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		$stmt->bind_param("ssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $status, $status);
+		$stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		$stmt->bind_param("sssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $status, $status);
 		$stmt->execute();
 
 		if ($symptoms){

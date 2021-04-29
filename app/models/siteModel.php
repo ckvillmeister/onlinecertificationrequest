@@ -151,5 +151,80 @@ class siteModel extends model{
 		return $result;
 	}
 
+	public function process_service($id, $service_name, $desc){
+		$status = 1;
+		$result = 0;
 
+		if ($id == 0){
+			$stmt = $this->con->prepare("INSERT INTO tbl_services (service_name, description, status) VALUES (?, ?, ?)");
+			$stmt->bind_param("sss", $service_name, $desc, $status);
+			$stmt->execute();
+			$result = 1;
+		}
+		else{
+			$query = "SELECT * FROM tbl_services WHERE record_id = ".$id;
+
+			if (mysqli_num_rows(mysqli_query($this->con, $query)) >= 1){
+				$stmt = $this->con->prepare("UPDATE tbl_services SET service_name = ?, description = ? WHERE record_id = ?");
+				$stmt->bind_param("sss", $service_name, $desc, $id);
+				$stmt->execute();
+				$result = 2;
+			}
+		}
+
+		$stmt->close();
+		$this->con->close();
+		return $result;
+	}
+
+	public function get_services($status){
+		$db = new database();
+		$this->con = $db->connection();
+		$stmt = $this->con->prepare("SELECT record_id, service_name, description, status FROM tbl_services WHERE status = ".$status);
+		$stmt->execute();
+		$stmt->bind_result($id, $service_name, $description, $status);
+		$services = array();
+
+		while ($stmt->fetch()) {
+			$services[] = array('id' => $id, 
+							'name' => $service_name,
+							'desc' => $description,
+							'status' => $status);
+		}
+		$stmt->close();
+		$this->con->close();
+		return $services;
+	}
+
+	public function get_service_info($id){
+		$db = new database();
+		$this->con = $db->connection();
+		$stmt = $this->con->prepare("SELECT record_id, service_name, description, status FROM tbl_services WHERE record_id = ?");
+		$stmt->bind_param("s", $id);
+		$stmt->execute();
+		$stmt->bind_result($id, $service_name, $description, $status);
+		$service_info = array();
+
+		while ($stmt->fetch()) {
+			$service_info = array('id' => $id, 
+							'name' => $service_name,
+							'desc' => $description,
+							'status' => $status);
+		}
+		$stmt->close();
+		$this->con->close();
+		return $service_info;
+	}
+
+	public function toggle_service($id, $status){
+		
+		$stmt = $this->con->prepare("UPDATE tbl_services SET status = ? WHERE record_id = ?");
+		$stmt->bind_param("ss", $status, $id);
+		$stmt->execute();
+		$result = 1;		
+
+		$stmt->close();
+		$this->con->close();
+		return $result;
+	}
 }

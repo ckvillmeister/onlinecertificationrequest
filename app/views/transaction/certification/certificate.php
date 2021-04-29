@@ -5,6 +5,7 @@
 
 	p{
 		font-family: 'Calibri';
+		color: <?php echo $data['settings']['Certificate Font Color']['desc']; ?>;
 	}
 
 	.content{
@@ -167,15 +168,17 @@
 	<div class="row singatories">
 		<div class="col-sm-6 seal text-center">
 			<br><br><br><br><br>
-			Not valid without <?php echo $settings['Business Name']['desc']; ?> Official Seal
+			<p>Not valid without <?php echo $settings['Business Name']['desc']; ?> Official Seal</p>
 		</div>
 		<div class="col-sm-6 doctor-signatory text-center">
 			<br><br>
-			<strong style="text-decoration: underline;"><?php echo strtoupper($settings['Clinic Doctor']['desc']); ?></strong>
-			<br>
-			<strong><?php echo "License No.: ".$settings['License Number']['desc']; ?></strong>
-			<br>
-			<strong><?php echo "PTR ".$settings['PTR']['desc']; ?></strong>
+			<p>
+				<strong style="text-decoration: underline;"><?php echo strtoupper($settings['Clinic Doctor']['desc']); ?></strong>
+				<br>
+				<strong><?php echo "License No.: ".$settings['License Number']['desc']; ?></strong>
+				<br>
+				<strong><?php echo "PTR ".$settings['PTR']['desc']; ?></strong>
+			</p>
 		</div>
 	</div>
 </div>

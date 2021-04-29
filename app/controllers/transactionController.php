@@ -38,12 +38,13 @@ class transactionController extends controller{
 		$dob = isset($_POST['dob']) ? $_POST['dob'] : '';
 		$contact = isset($_POST['contact']) ? $_POST['contact'] : '';
 		$pickupdate = isset($_POST['pickupdate']) ? $_POST['pickupdate'] : '';
+		$school_course = isset($_POST['school_course']) ? $_POST['school_course'] : 0;
 		$symptoms = isset($_POST['symptoms']) ? $_POST['symptoms'] : '';
 		$new_date =date("Y-m-d",strtotime($pickupdate));
 		$new_dob =date("Y-m-d",strtotime($dob));
 
 		$transaction_model = new transactionModel();
-		$result = $transaction_model->process_request($firstname, $middlename, $lastname, $extension, $address, $sex, $new_dob, $contact, $new_date, $symptoms);
+		$result = $transaction_model->process_request($firstname, $middlename, $lastname, $extension, $address, $sex, $new_dob, $contact, $new_date, $school_course, $symptoms);
 
 		echo $result;
 	}

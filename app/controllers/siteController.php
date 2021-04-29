@@ -145,4 +145,41 @@ class siteController extends controller{
 		$result = $site_model->toggle_photo($id, $status);
 		echo $result;
 	}
+
+	public function process_service(){
+		$id = isset($_POST['id']) ? $_POST['id'] : 0;
+		$service_name = isset($_POST['service_name']) ? $_POST['service_name'] : 0;
+		$desc = isset($_POST['desc']) ? $_POST['desc'] : 0;
+
+		$site_model = new siteModel();
+		$result = $site_model->process_service($id, $service_name, $desc);
+		echo $result;
+	}
+
+	public function get_services(){
+		$status = isset($_POST['status']) ? $_POST['status'] : 0;
+
+		$site_model = new siteModel();
+		$services = $site_model->get_services($status);
+		
+		$this->view()->render('services/list.php', array('services' => $services));
+	}
+
+	public function get_service_info(){
+		$id = isset($_POST['id']) ? $_POST['id'] : 0;
+
+		$site_model = new siteModel();
+		$serviceinfo = $site_model->get_service_info($id);
+
+		echo json_encode($serviceinfo);
+	}
+
+	public function toggle_service(){
+		$id = isset($_POST['id']) ? $_POST['id'] : 0;
+		$status = isset($_POST['status']) ? $_POST['status'] : 0;
+		
+		$site_model = new siteModel();
+		$result = $site_model->toggle_service($id, $status);
+		echo $result;
+	}
 }

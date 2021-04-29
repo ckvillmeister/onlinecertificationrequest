@@ -44,11 +44,26 @@ $(document).ready(function(){
     //get_requests(3);
     $('#request_list').html('');
     $('#control_buttons').html('<div class="row">' +
-                                  '<div class="col-lg-1"><span style="font-size:9pt">Request Date:</span></div>' +
-                                  '<div class="col-lg-2">' +
+                                  '<div class="col-lg-2"><strong>Filter By</strong></div>' +
+                                '</div><br>' +
+                                '<div class="row">' +
+                                  '<div class="col-lg-2">Request Date:</div>' +
+                                  '<div class="col-lg-3">' +
                                     '<input type="date" id="text_date" class="form-control form-control-sm mr-2 mb-2">' + 
                                   '</div>' +
-                                  '<div class="col-lg-2">' +
+                                '</div>' +
+                                '<div class="row">' +
+                                  '<div class="col-lg-2">Pick-up Date:</div>' +
+                                  '<div class="col-lg-3">' +
+                                    '<input type="date" id="text_pdate" class="form-control form-control-sm mr-2 mb-2">' + 
+                                  '</div>' +
+                                '</div>' +
+                                '<div class="row">' +
+                                  '<div class="col-lg-2"><strong>Or</strong></div>' +
+                                '</div><br>' +
+                                '<div class="row">' +
+                                  '<div class="col-lg-2">Print Status:</div>' +
+                                  '<div class="col-lg-3">' +
                                     '<select id="cbo_printstat" class="form-control form-control-sm mr-2 mb-2">' +
                                       '<option value=""> [ Print Status ] </option>' +
                                       '<option value="1">Not Printed</option>' +
@@ -56,16 +71,22 @@ $(document).ready(function(){
                                       '<option value="3">All</option>' +
                                     '</select>' +
                                   '</div>' +
-                                  '<div class="col-lg-2">' +
+                                '</div>' +
+                                '<div class="row">' +
+                                  '<div class="col-lg-2">Symptoms:</div>' +
+                                  '<div class="col-lg-3">' +
                                     '<select id="cbo_symptomstat" class="form-control form-control-sm mr-2 mb-2">' +
                                       '<option value=""> [ Symptom Status ] </option>' +
                                       '<option value="1">Without Symptoms</option>' +
                                       '<option value="2">With Symptoms</option>' +
                                     '</select>' +
                                   '</div>' +
-                                  '<div class="col-lg-2">' +
-                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:75px" id="btn_filter">Filter</button>' +
-                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:75px" id="btn_print_all">Print All</button>' +
+                                '</div><br>' +
+                                '<div class="row">' +
+                                  '<div class="col-lg-12">' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:100px" id="btn_filter">Generate</button>' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:100px" id="btn_select_print">Print Custom</button>' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:100px" id="btn_print_all">Print All</button>' +
                                   '</div>' +
                                 '</div>');
   });

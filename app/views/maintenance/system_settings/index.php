@@ -5,7 +5,7 @@
   <?php require 'app/views/components/header.php'; ?>
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed" onload="changecolor()">
 
 <div class="wrapper">
   <?php require 'app/views/components/navbar.php'; ?>
@@ -98,6 +98,15 @@
 
                       <div class="row mt-4">
                         <div class="col-lg-3 align-self-center">
+                            Clinic Schedule:
+                        </div>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" value="<?php echo ($arr_settings['Clinic Schedule']) ? $arr_settings['Clinic Schedule'] : '' ; ?>" id="text_clinic_sched">
+                        </div>
+                      </div>
+
+                      <div class="row mt-4">
+                        <div class="col-lg-3 align-self-center">
                             E-mail Address:
                         </div>
                         <div class="col-lg-6">
@@ -138,6 +147,21 @@
                         </div>
                         <div class="col-lg-6">
                             <input type="text" class="form-control" value="<?php echo ($arr_settings['PTR']) ? $arr_settings['PTR'] : '' ; ?>" id="text_ptr">
+                        </div>
+                      </div>
+
+                      <div class="row mt-4">
+                        <div class="col-lg-3 align-self-center">
+                            Certificate Font Color:
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="input-group my-colorpicker2">
+                            <input type="text" class="form-control" value="<?php echo ($arr_settings['Certificate Font Color']) ? $arr_settings['Certificate Font Color'] : '' ; ?>" id="text_font_color">
+
+                            <div class="input-group-append">
+                              <span class="input-group-text"><i class="fas fa-square"></i></span>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
@@ -228,4 +252,9 @@
 </body>
 <?php require 'app/views/components/footer.php'; ?>
 <script type="text/javascript" src="<?php echo ROOT.'public/js/settings.js'; ?>"></script>
+<script type="text/javascript">
+  function changecolor(){
+    $('.my-colorpicker2 .fa-square').css('color', "<?php echo $arr_settings['Certificate Font Color']; ?>");
+  }
+</script>
 </html>

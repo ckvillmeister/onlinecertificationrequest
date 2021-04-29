@@ -9,8 +9,9 @@ $(document).ready(function(){
   });
 
   $('#btn_new_role').click(function(e){
-     $('#text_rolename').val('');
-     $('#text_description').val('');
+    role_id = 0;
+    $('#text_rolename').val('');
+    $('#text_description').val('');
   });
 
   $('#btn_active').click(function(e){

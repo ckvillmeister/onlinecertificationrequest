@@ -48,6 +48,12 @@ $(document).ready(function(){
     	retireve_barangays(data);
     });
 
+    $('#cbo_schools').on('change', function(){
+    	var selected = $('#cbo_schools').find('option:selected');
+    	var data = selected.data('id'); 
+    	retrieve_courses(data);
+    });
+
     $('#btn_submitrequest').click(function(e){
 		var firstname = $('#text_firstname').val(),
 			middlename = $('#text_middlename').val(),
@@ -61,7 +67,15 @@ $(document).ready(function(){
 			dob = $('#text_dob').val(),
 			contact = $('#text_contactno').val(),
 			pickupdate = $('#text_pickupdate').val(),
-			error = false;
+			school = $('#cbo_schools').val(),
+			school_course = $('#cbo_courses').val(),
+			error = false,
+			course_text = '';
+
+		//$('#cbo_courses option:selected').text();
+		if (school_course != ''){
+			course_text = $('#cbo_courses option:selected').text();
+		}
 
 		var pdate = new Date(pickupdate).valueOf();
 		var datetoday = new Date().valueOf();
@@ -204,9 +218,109 @@ $(document).ready(function(){
 		    });
 
 		    var address = purok + ', ' + brgy + ', ' + muncity + ', ' + prov; 
+		    var sym = '', sym_val = [], ctr = 0;
 
-			submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, symptoms);
+			$.each(symptoms , function(i, val) { 
+				$.each(val , function(index, value) { 
+					if (index == 1){	
+						sym += value + ", ";
+					}
+					else{
+						sym_val[ctr] = value;
+						ctr++;
+					}
+				});	
+			}); 
+
+			if (sym == ''){
+				sym = '<div class="form-row m-2">' +
+							'<div class="col-sm-4"><strong>None</strong></div>' +
+						'</div>';
+			}
+			else{
+				sym = sym.substring(0, sym.length - 2);
+			}
+
+			//submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, symptoms);
+			$('#modal_confirm_content').html('<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Fullname: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ firstname + ' ' + middlename + ' ' + lastname + ' ' + extension + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Address: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ address + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Sex: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ sex + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Date of Birth: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ dob + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Contact Number: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ contact + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">School: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ school + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Course: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ course_text + '</strong></div>' +
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Pick-up Date: </div>' +
+					 	'<div class="col-sm-9"><strong>'+ pickupdate + '</strong></div>' +
+					 '</div><br>' +
+					 '<div class="form-row m-2">' +
+					 	'<div class="col-sm-3">Symptoms: </div>'+
+					 '</div>' +
+					 '<div class="form-row m-2">' +
+						'<div class="col-sm-12"><strong>' + sym + '</strong></div>' +
+					 '</div>' +
+					 '<hr>' +
+					 '<div class="form-row m-2">' +
+						'<div class="col-sm-12">' +
+							'<p style="text-align: justify; text-justify: inter-word;">' + 
+							'In accordance with the "Data Privacy Act of 2012", ' + $('#biz_name').html() + ' will protect your information by not sharing it with anyone and will use it for its purpose (Medical Certification).' + 
+						'</div>' +
+					 '</div>');
+			
+			$('#confirm').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    })
 		}
+	});
+
+	$('#btn_confirm').click(function(e){
+		var firstname = $('#text_firstname').val(),
+			middlename = $('#text_middlename').val(),
+			lastname = $('#text_lastname').val(),
+			extension = $('#cbo_extension').val(),
+			prov = $('#text_prov').val(),
+			muncity = $('#cbo_muncity').val(),
+			brgy = $('#cbo_barangay').val(),
+			purok = $('#cbo_purok').val(),
+			sex = $('#cbo_sex').val(),
+			dob = $('#text_dob').val(),
+			contact = $('#text_contactno').val(),
+			pickupdate = $('#text_pickupdate').val(),
+			school = $('#cbo_schools').val(),
+			school_course = $('#cbo_courses').val(),
+			symptoms = [], 
+			ctr = 0,
+			address = purok + ', ' + brgy + ', ' + muncity + ', ' + prov; 
+
+		    $('#symptoms_checklist input[type="checkbox"]').each(function(){
+		      if ($(this).is(':checked')){
+		        symptoms[ctr] = [$(this).val(), $(this).attr("data-desc")];
+		        ctr++;
+		      }
+		    });
+		submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, school_course, symptoms);
 	});
 
 	function login(username, password){
@@ -236,116 +350,53 @@ $(document).ready(function(){
 		})
 	}
 
-	function submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, symptoms){
+	function submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, school_course, symptoms){
 		
-		var sym = '', sym_val = [], ctr = 0;
+        $.ajax({
+		    url: 'transaction/process_request',
+	        method: 'POST',
+	        data: {firstname: firstname, 
+	        		middlename: middlename,
+		        	lastname: lastname,
+		        	extension: extension,
+		    		address: address,
+		    		sex: sex,
+		    		dob: dob,
+					contact: contact,
+					pickupdate: pickupdate,
+					school_course: school_course,
+					symptoms: symptoms
+				},
+	        success: function(result) {
+	        	var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+				var date = new Date(pickupdate);
+				var new_date = months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
 
-		$.each(symptoms , function(i, val) { 
-			$.each(val , function(index, value) { 
-				if (index == 1){	
-					sym += value + ", ";
-				}
-				else{
-					sym_val[ctr] = value;
-					ctr++;
-				}
-			});	
-		}); 
-
-		if (sym == ''){
-			sym = '<div class="form-row m-2">' +
-						'<div class="col-sm-4"><strong>None</strong></div>' +
-					'</div>';
-		}
-		else{
-			sym = sym.substring(0, sym.length - 2);
-		}
-
-		$.confirm({
-			title: 'Confirm',
-			type: 'blue',
-			columnClass: 'col-lg-12',
-			content: '<div class="form-row m-2">' +
-					 	'<div class="col-sm-2">Fullname: </div>' +
-					 	'<div class="col-sm-10"><strong>'+ firstname + ' ' + middlename + ' ' + lastname + ' ' + extension + '</strong></div>' +
-					 '</div>' +
-					 '<div class="form-row m-2">' +
-					 	'<div class="col-sm-2">Address: </div>' +
-					 	'<div class="col-sm-10"><strong>'+ address + '</strong></div>' +
-					 '</div>' +
-					 '<div class="form-row m-2">' +
-					 	'<div class="col-sm-2">Sex: </div>' +
-					 	'<div class="col-sm-10"><strong>'+ sex + '</strong></div>' +
-					 '</div>' +
-					 '<div class="form-row m-2">' +
-					 	'<div class="col-sm-2">Date of Birth: </div>' +
-					 	'<div class="col-sm-10"><strong>'+ dob + '</strong></div>' +
-					 '</div>' +
-					 '<div class="form-row m-2">' +
-					 	'<div class="col-sm-2">Contact Number: </div>' +
-					 	'<div class="col-sm-10"><strong>'+ dob + '</strong></div>' +
-					 '</div>' +
-					 '<div class="form-row m-2">' +
-					 	'<div class="col-sm-2">Pick-up Date: </div>' +
-					 	'<div class="col-sm-10"><strong>'+ pickupdate + '</strong></div>' +
-					 '</div><br>' +
-					 '<div class="form-row m-2">' +
-					 	'<div class="col-sm-2">Symptoms: </div>'+
-					 '</div>' +
-					 '<div class="form-row m-2">' +
-						'<div class="col-sm-12"><strong>' + sym + '</strong></div>' +
-					 '</div>' +
-					 '<div class="form-row m-2">' +
-						'<div class="col-sm-12"><strong>Date Privacy Notice</strong></div>' +
-					 '</div>',
-			buttons: {
-		        confirm: function () {
-		            $.ajax({
-					    url: 'transaction/process_request',
-				        method: 'POST',
-				        data: {firstname: firstname, 
-				        		middlename: middlename,
-					        	lastname: lastname,
-					        	extension: extension,
-					    		address: address,
-					    		sex: sex,
-					    		dob: dob,
-								contact: contact,
-								pickupdate: pickupdate,
-								symptoms: sym_val},
-				        success: function(result) {
-				        	if (result == 1){
-				        		$.alert({
-								    title: 'Success',
-								    type: 'green',
-								    content: 'Your request has been sent! <br>' +
-								    		'Go to Sure Care Medical Clinic located ' +
-								    		'Poblacion, Trinidad, Bohol on ' +
-								    		'to pick up your medical certificate.',
-								    buttons: {
-								        ok: function(){
-								        	location.reload();
-								        }
-								    }
-
-								});
-
-								
-				        	}
-				        	else{
-				        		$.alert({
-								    title: 'Error',
-								    type: 'red',
-								    content: 'Error during submission!',
-								});
-				        	}
+	        	if (result == 1){
+	        		$.alert({
+					    title: 'Success',
+					    type: 'green',
+					    content: 'Your request has been sent! <br>' +
+					    		'Go to Sure Care Medical Clinic located ' +
+					    		'Poblacion, Trinidad, Bohol on <strong>' + new_date + '</strong>' +
+					    		' to pick up your medical certificate.',
+					    buttons: {
+					        ok: function(){
+					        	location.reload();
+					        }
 					    }
-					});
-		    	},
-			    cancel: function(){
 
-			    }
-		    	
+					});
+
+					
+	        	}
+	        	else{
+	        		$.alert({
+					    title: 'Error',
+					    type: 'red',
+					    content: 'Error during submission!',
+					});
+	        	}
 		    }
 		});
 	}
@@ -357,12 +408,26 @@ $(document).ready(function(){
 	        data: {muncity_code: muncity_code},
 	        dataType: 'JSON',
 	        success: function(result) {
+	        	$('#cbo_barangay').empty();
+	        	$('#cbo_barangay').append('<option value=""> [ Barangay ] </option>');
 	        	$.each(result, function(key, value) {
-	        		$.each(this, function(key, value) {
-	        			if (key == 'desc'){
-	        				$('#cbo_barangay').append('<option value="'+value+'">'+value+'</option>');
-	        			}
-	        		});
+	        		$('#cbo_barangay').append('<option value="'+value['desc']+'">'+value['desc']+'</option>');
+	        	});
+		    }
+		})
+	}
+
+	function retrieve_courses(school_id){
+		$.ajax({
+		    url: 'course/retrieve_courses',
+	        method: 'POST',
+	        data: {school_id: school_id},
+	        dataType: 'JSON',
+	        success: function(result) {
+	        	$('#cbo_courses').empty();
+	        	$('#cbo_courses').append('<option value=""> [ Course ] - <i>For Students</i> </option>');
+	        	$.each(result, function(key, value) {
+	        		$('#cbo_courses').append('<option value="'+value['id']+'">'+value['desc']+'</option>');
 	        	});
 		    }
 		})

@@ -1,16 +1,17 @@
 $(document).ready(function(){
 
-  var faq_id = 0;
+  var gallery_id = 0;
   get_photos(1);
 
   $('#btn_submit').click(function(e){
-    process_photo(faq_id);
+    process_photo(gallery_id);
     get_photos(1);
   });
 
   $('#btn_new_photo').click(function(e){
-     $('#text_caption').val('');
-     $('#upload_photo').val('');
+    gallery_id = 0;
+    $('#text_caption').val('');
+    $('#upload_photo').val('');
   });
 
   $('#btn_active').click(function(e){

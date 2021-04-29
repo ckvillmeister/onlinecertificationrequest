@@ -15,6 +15,7 @@
 <script src="<?php echo ROOT.BOOTSTRAP; ?>dist/js/jquery-confirm.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/pdfmake/pdfmake.min.js"></script>
 <script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/pdfmake/vfs_fonts.js"></script>
+<script src="<?php echo ROOT.BOOTSTRAP; ?>plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 <script type="text/javascript">
 	$('.btn_submit_change_pass').click(function(){
 		if ($('#text_newpassword').val() == ''){

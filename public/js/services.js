@@ -1,34 +1,34 @@
 $(document).ready(function(){
 
-var faq_id = 0;
-get_faqs(1);
+var service_id = 0;
+get_services(1);
 
 $('#btn_submit').click(function(e){
-  process_faq(faq_id);
-  get_faqs(1);
+  process_service(service_id);
+  get_services(1);
 });
 
-$('#btn_new_faq').click(function(e){
-    faq_id = 0;
-   $('#text_question').val('');
-   $('#text_answer').val('');
+$('#btn_new_service').click(function(e){
+    service_id = 0;
+   $('#text_service_name').val('');
+   $('#text_description').val('');
 });
 
 $('#btn_active').click(function(e){
-   get_faqs(1);
+   get_services(1);
 });
 
 $('#btn_trash').click(function(e){
-   get_faqs(0);
+   get_services(0);
 });
 
-$('body').on('click', '#btn_edit_faq', function(e){
-  faq_id = $(this).val();
-  get_faq_info(faq_id);
-  $('#modal_faq_form').modal('show');
+$('body').on('click', '#btn_edit_service', function(e){
+  service_id = $(this).val();
+  get_service_info(service_id);
+  $('#modal_service_form').modal('show');
 });
 
-$('body').on('click', '#btn_delete_faq', function(e){
+$('body').on('click', '#btn_delete_service', function(e){
   var id = $(this).val();
   $.confirm({
       title: 'Confirm',
@@ -36,8 +36,8 @@ $('body').on('click', '#btn_delete_faq', function(e){
       type: 'blue',
       buttons: {
                 yes: function () {
-                  toggle_faq(id, 0);
-                  get_faqs(1);
+                  toggle_service(id, 0);
+                  get_services(1);
                 },
                 no: function () {
 
@@ -46,7 +46,7 @@ $('body').on('click', '#btn_delete_faq', function(e){
   });
 });
 
-$('body').on('click', '#btn_activate_faq', function(e){
+$('body').on('click', '#btn_activate_service', function(e){
   var id = $(this).val();
   $.confirm({
       title: 'Confirm',
@@ -54,8 +54,8 @@ $('body').on('click', '#btn_activate_faq', function(e){
       type: 'blue',
       buttons: {
                 yes: function () {
-                  toggle_faq(id, 1);
-                  get_faqs(0);
+                  toggle_service(id, 1);
+                  get_services(0);
                 },
                 no: function () {
 
@@ -64,23 +64,23 @@ $('body').on('click', '#btn_activate_faq', function(e){
   });
 });
 
-function process_faq(id){
+function process_service(id){
   $.ajax({
-      url: 'process_faq',
+      url: 'process_service',
       method: 'POST',
       data: {id: id, 
-            question: $('#text_question').val(),
-            answer: $('#text_answer').val()
+            service_name: $('#text_service_name').val(),
+            desc: $('#text_description').val()
       },
       success: function(result) {
         if (result == 1){
           $.alert({
               title: 'Saved!',
               type: 'green',
-              content: "New FAQ added!",
+              content: "New service added!",
               buttons: {
                         ok: function () {
-                          $('#modal_faq_form').modal('hide');
+                          $('#modal_service_form').modal('hide');
                         }
               }
           });
@@ -89,10 +89,10 @@ function process_faq(id){
           $.alert({
               title: 'Updated!',
               type: 'green',
-              content: "FAQ updated!",
+              content: "service updated!",
               buttons: {
                         ok: function () {
-                          $('#modal_faq_form').modal('hide');
+                          $('#modal_service_form').modal('hide');
                         }
               }
           });
@@ -115,14 +115,14 @@ function process_faq(id){
   })
 }
 
-function get_faqs(status){
+function get_services(status){
   $.ajax({
-      url: 'get_faqs',
+      url: 'get_services',
         method: 'POST',
         data: {status: status},
         dataType: 'html',
       success: function(result) {
-        $('#faqs_list').html(result);
+        $('#services_list').html(result);
       },
       error: function(obj, err, ex){
         $.alert({
@@ -134,15 +134,15 @@ function get_faqs(status){
   })
 }
 
-function get_faq_info(id){
+function get_service_info(id){
   $.ajax({
-      url: 'get_faq_info',
+      url: 'get_service_info',
         method: 'POST',
         data: {id: id},
         dataType: 'JSON',
       success: function(result) {
-        $('#text_question').val(result['question']);
-        $('#text_answer').val(result['answer']);
+        $('#text_service_name').val(result['name']);
+        $('#text_description').val(result['desc']);
       },
       error: function(obj, err, ex){
         $.alert({
@@ -154,9 +154,9 @@ function get_faq_info(id){
   })
 }
 
-function toggle_faq(id, status){
+function toggle_service(id, status){
   $.ajax({
-      url: 'toggle_faq',
+      url: 'toggle_service',
         method: 'POST',
         data: {id: id, status: status},
         dataType: 'html',

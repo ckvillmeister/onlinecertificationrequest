@@ -43,7 +43,7 @@ class settingsModel extends model{
 		return $setting;
 	}
 
-	public function save_settings($name, $title, $bizname, $bizadd, $email, $number, $doctor, $licenseno, $ptr){
+	public function save_settings($name, $title, $bizname, $bizadd, $sched, $email, $number, $doctor, $licenseno, $ptr, $fontcolor){
 		$db = new database();
 		$this->con = $db->connection();
 
@@ -61,6 +61,10 @@ class settingsModel extends model{
 
 		$stmt = $this->con->prepare("UPDATE tbl_sys_settings SET setting_desc = ? WHERE setting_name = 'Business Address'");
 		$stmt->bind_param("s", $bizadd);
+		$stmt->execute();
+
+		$stmt = $this->con->prepare("UPDATE tbl_sys_settings SET setting_desc = ? WHERE setting_name = 'Clinic Schedule'");
+		$stmt->bind_param("s", $sched);
 		$stmt->execute();
 
 		$stmt = $this->con->prepare("UPDATE tbl_sys_settings SET setting_desc = ? WHERE setting_name = 'E-mail Address'");
@@ -81,6 +85,10 @@ class settingsModel extends model{
 
 		$stmt = $this->con->prepare("UPDATE tbl_sys_settings SET setting_desc = ? WHERE setting_name = 'PTR'");
 		$stmt->bind_param("s", $ptr);
+		$stmt->execute();
+
+		$stmt = $this->con->prepare("UPDATE tbl_sys_settings SET setting_desc = ? WHERE setting_name = 'Certificate Font Color'");
+		$stmt->bind_param("s", $fontcolor);
 		$stmt->execute();
 
 		$stmt->close();

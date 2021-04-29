@@ -9,7 +9,8 @@ $('#btn_submit').click(function(e){
 });
 
 $('#btn_new_item').click(function(e){
-   $('#text_description').val('');
+  item_id = 0;
+  $('#text_description').val('');
 });
 
 $('#btn_active').click(function(e){

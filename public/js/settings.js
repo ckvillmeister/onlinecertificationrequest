@@ -1,6 +1,12 @@
 $(document).ready(function(){
+
+  $('#text_font_color').colorpicker();
+  $('#text_font_color').on('colorpickerChange', function(event) {
+      $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+    });
+
   $('#btn_submit').click(function(e){
-     save_settings($('#text_system_name').val(), $('#text_site_title').val(), $('#text_biz_name').val(), $('#text_biz_add').val(), $('#text_email').val(), $('#text_number').val(), $('#text_doctor').val(), $('#text_licenseno').val(), $('#text_ptr').val());
+     save_settings($('#text_system_name').val(), $('#text_site_title').val(), $('#text_biz_name').val(), $('#text_biz_add').val(), $('#text_clinic_sched').val(), $('#text_email').val(), $('#text_number').val(), $('#text_doctor').val(), $('#text_licenseno').val(), $('#text_ptr').val(), $('#text_font_color').val());
   });
 
   $('#btn_backup').click(function(e){
@@ -74,18 +80,20 @@ $(document).ready(function(){
     })
   });
 
-  function save_settings(systemname, title, bizname, bizadd, email, number, doctor, licenseno, ptr){
+  function save_settings(systemname, title, bizname, bizadd, sched, email, number, doctor, licenseno, ptr, fontcolor){
     $.ajax({
         url: 'settings/save_settings',
         data: { name: systemname,
                 title: title,
                 bizname: bizname,
                 bizadd: bizadd,
+                sched: sched,
                 email: email,
                 number: number,
                 doctor: doctor,
                 licenseno: licenseno,
-                ptr: ptr
+                ptr: ptr,
+                fontcolor: fontcolor
         },
         method: 'POST',
         success: function(result) {

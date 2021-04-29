@@ -32,12 +32,14 @@ class settingsController extends controller{
 		$title = $_POST['title'];
 		$bizname = $_POST['bizname'];
 		$bizadd = $_POST['bizadd'];
+		$sched = $_POST['sched'];
 		$email = $_POST['email'];
 		$number = $_POST['number'];
 		$doctor = $_POST['doctor'];
 		$licenseno = $_POST['licenseno'];
 		$ptr = $_POST['ptr'];
-		$result = $settings_model->save_settings($name, $title, $bizname, $bizadd, $email, $number, $doctor, $licenseno, $ptr);
+		$fontcolor = $_POST['fontcolor'];
+		$result = $settings_model->save_settings($name, $title, $bizname, $bizadd, $sched, $email, $number, $doctor, $licenseno, $ptr, $fontcolor);
 		echo $result;
 	}
 

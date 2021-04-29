@@ -79,7 +79,7 @@ $new_reqs = count($transaction_model->get_requests(1));
         </li>
         <?php endif; ?>
 
-        <?php //if ($accessrole_model->check_access($role, 'transactions')): ?>
+        <?php if ($accessrole_model->check_access($role, 'managesite')): ?>
         <li class="nav-item has-treeview <?php if ($link=='site'){ echo 'menu-open'; } ?>">
           <a href="#" class="nav-link <?php if ($link=='site'){ echo 'active'; } ?>">
             <i class="nav-icon fas fa-user"></i>
@@ -90,36 +90,36 @@ $new_reqs = count($transaction_model->get_requests(1));
           </a>
           <ul class="nav nav-treeview">
 
-            <?php //if ($accessrole_model->check_access($role, 'certification')): ?>
+            <?php if ($accessrole_model->check_access($role, 'faqs')): ?>
             <li class="nav-item">
               <a href="<?php echo ROOT; ?>site/faqs" class="nav-link <?php echo ($link_2 == 'faqs') ? 'active' : ''; ?>">
                 <i class="far fa-circle nav-icon"></i>
                 <p>FAQs</p>
               </a>
             </li>
-            <?php //endif; ?>
+            <?php endif; ?>
 
-            <?php //if ($accessrole_model->check_access($role, 'certification')): ?>
+            <?php if ($accessrole_model->check_access($role, 'services')): ?>
             <li class="nav-item">
               <a href="<?php echo ROOT; ?>site/services" class="nav-link <?php echo ($link_2 == 'services') ? 'active' : ''; ?>">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Services</p>
               </a>
             </li>
-            <?php //endif; ?>
+            <?php endif; ?>
 
-            <?php //if ($accessrole_model->check_access($role, 'certification')): ?>
+            <?php if ($accessrole_model->check_access($role, 'gallery')): ?>
             <li class="nav-item">
               <a href="<?php echo ROOT; ?>site/gallery" class="nav-link <?php echo ($link_2 == 'gallery') ? 'active' : ''; ?>">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Gallery</p>
               </a>
             </li>
-            <?php //endif; ?>
+            <?php endif; ?>
 
           </ul>
         </li>
-        <?php //endif; ?>
+        <?php endif; ?>
           
         <?php if ($accessrole_model->check_access($role, 'reports')): ?>
         <li class="nav-item has-treeview <?php if ($link=='report' & $link_2 != 'search'){ echo 'menu-open'; } ?>">
