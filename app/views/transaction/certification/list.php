@@ -64,6 +64,7 @@
   var table = $('#table_new_request_list').DataTable({
     "scrollX": true,
     "ordering": false,
+    lengthMenu: [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]],
     styles: {
       tableHeader: {
         fontSize: 8

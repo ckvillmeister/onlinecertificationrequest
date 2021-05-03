@@ -7,13 +7,14 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="<?php echo ROOT.MEDILAB_BS; ?>assets/img/favicon.png" rel="icon">
+   <link rel="icon" href="<?php echo ($data['settings']['System Logo']['desc']) ? ROOT.$data['settings']['System Logo']['desc'] : "" ; ?>">
   <link href="<?php echo ROOT.MEDILAB_BS; ?>assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts 
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet"> -->
 
   <!-- Vendor CSS Files -->
+  <link rel="stylesheet" href="<?php echo ROOT.BOOTSTRAP; ?>plugins/fontawesome-free/css/all.min.css">
   <link href="<?php echo ROOT.MEDILAB_BS; ?>assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="<?php echo ROOT.MEDILAB_BS; ?>assets/vendor/icofont/icofont.min.css" rel="stylesheet">
   <link href="<?php echo ROOT.MEDILAB_BS; ?>assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
@@ -25,6 +26,55 @@
   <link rel="stylesheet" href="<?php echo ROOT.BOOTSTRAP; ?>dist/css/jquery-confirm.min.css">
   <!-- Template Main CSS File -->
   <link href="<?php echo ROOT.MEDILAB_BS; ?>assets/css/style.css" rel="stylesheet">
+  <style type="text/css">
+    .sure_care_image{
+      z-index: 2;
+      position: absolute;
+      margin-top: 8%;
+    }
+
+    .overlay-wrapper{
+      z-index: 2;
+      position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: 100px;
+    height: 100px;
+    }
+
+    @media (max-width: 991px) {
+      .sure_care_image{
+        margin-top: 30%;
+        width: 100%;
+        height: 10%;
+        text-align: center;
+      }
+
+      .bisname{
+        font-size: 10pt;
+      }
+      
+    }
+
+    @media (max-width: 1199px) {
+      .sure_care_image{
+        margin-top: 5%;
+        width: 100%;
+        height: 50%;
+        text-align: center;
+      }
+
+      #main{
+        margin-top: -5%;
+      }
+
+      .bisname{
+        font-size: 10pt;
+      }
+    }
+  </style>
 
 </head>
 
@@ -52,7 +102,7 @@
     <div class="container d-flex align-items-center">
 
       <h1 class="logo mr-auto">
-        <a href="<?php echo ROOT; ?>" style="color: #218838">
+        <a href="<?php echo ROOT; ?>" style="color: #218838" class="bisname">
         <?php echo ($data['settings']['Business Name']['desc']) ? $data['settings']['Business Name']['desc'] : "" ; ?>
         </a>
       </h1>
@@ -74,7 +124,8 @@
   </header><!-- End Header -->
 
   <!-- ======= Hero Section ======= -->
-  <section id="hero" class="d-flex align-items-center" style='background: url("<?php echo ROOT.MEDILAB_BS; ?>assets/img/banner.jpg") top center;'>
+  <img src="<?php echo ROOT.MEDILAB_BS; ?>assets/img/sure-care.png" class="sure_care_image">
+  <section id="hero" class="d-flex align-items-center banner" style='position: relative; z-index: 0; background: url("<?php echo ROOT.MEDILAB_BS; ?>assets/img/banner.jpg") top center;'>
     <div class="container">
       <!--<h2>Welcome to</h2>
       <h1><?php //echo ($data['settings']['Business Name']['desc']) ? $data['settings']['Business Name']['desc'] : "" ; ?></h1>
@@ -104,7 +155,7 @@
           <div class="col-lg-8 d-flex align-items-stretch">
             <div class="icon-boxes d-flex flex-column justify-content-center">
               <div class="row">
-
+                
                 <div class="col-xl-4 d-flex align-items-stretch">
                   <div class="icon-box mt-4 mt-xl-0">
                     <i class="bx bx-cloud-upload"></i>
@@ -189,7 +240,8 @@
           <h2>Request Certificate</h2>
           <p></p>
         </div>
-
+        <div class="overlay-wrapper">
+        </div>
         <!--<form action="" method="post" role="form" class="php-email-form">-->
         <div class="php-email-form">
           <div class="form-row">
@@ -275,11 +327,11 @@
                 <option value="Purok 6"> Purok 6 </option>
                 <option value="Purok 7"> Purok 7 </option>
               </datalist>
-              <div class="error-message-addrpurok"></div>
+              <div class="error-message-course"></div>
             </div>
           </div>
           <div class="form-row">
-            <div class="col-md-6 text-center">
+            <div class="col-md-6 form-group">
               <select id="cbo_schools" class="form-control">
                 <option value=""> [ School ] - <i>For Students</i> </option>
                 <?php
@@ -288,11 +340,13 @@
                   }
                 ?>
               </select>
+              <div class="error-message-addrpurok"></div>
             </div>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6 form-group">
               <select id="cbo_courses" class="form-control">
                 <option value=""> [ Course ] - <i>For Students</i> </option>
               </select>
+              <div class="error-message-course"></div>
             </div>
           </div>
           <br>

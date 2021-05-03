@@ -9,6 +9,27 @@ class courseModel extends model{
 		$this->con = $db->connection();
 	}
 
+	public function get_courses($status){
+		$db = new database();
+		$this->con = $db->connection();
+		$stmt = $this->con->prepare("SELECT record_id, course_code, course_description, status 
+										FROM tbl_courses tc WHERE status = ?");
+		$stmt->bind_param("s", $status);
+		$stmt->execute();
+		$stmt->bind_result($id, $course_code, $course_description, $status);
+		$courses = array();
+
+		while ($stmt->fetch()) {
+			$courses[] = array('id' => $id, 
+							'code' => $course_code, 
+							'desc' => $course_description,
+							'status' => $status);
+		}
+		$stmt->close();
+		$this->con->close();
+		return $courses;
+	}
+
 	public function get_school_courses($schoolid, $status){
 		$db = new database();
 		$this->con = $db->connection();

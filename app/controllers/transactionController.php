@@ -67,12 +67,14 @@ class transactionController extends controller{
 	}
 
 	public function get_filtered_requests(){
-		$date = isset($_POST['date']) ? $_POST['date'] : 0;
+		$rdate = isset($_POST['rdate']) ? $_POST['rdate'] : 0;
+		$pdate = isset($_POST['pdate']) ? $_POST['pdate'] : 0;
 		$printstat = isset($_POST['printstat']) ? $_POST['printstat'] : 0;
 		$symptomstat = isset($_POST['symptomstat']) ? $_POST['symptomstat'] : 0;
+		$course = isset($_POST['course']) ? $_POST['course'] : 0;
 
 		$transaction_model = new transactionModel();
-		$requests = $transaction_model->get_filtered_requests($date, $printstat, $symptomstat);
+		$requests = $transaction_model->get_filtered_requests($rdate, $pdate, $printstat, $symptomstat, $course);
 		
 		$this->view()->render('transaction/certification/list.php', array('requests' => $requests));
 	}
@@ -184,6 +186,14 @@ class transactionController extends controller{
 		$settings = $settings_model->get_settings();
 
 		$this->view()->render('transaction/certification/certificate.php', array('certs' => $certs, 'settings' => $settings));
+	}
+
+	public function get_courses(){
+		$status = isset($_POST['status']) ? $_POST['status'] : 0;
+
+		$course_model = new courseModel();
+		$courses = $course_model->get_courses($status);
+		echo json_encode($courses);
 	}
 
 }

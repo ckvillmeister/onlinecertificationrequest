@@ -80,7 +80,7 @@ $(document).ready(function(){
     $("#text_newpassword").val('');
     $("#text_cnewpassword").val('');
     $('.btn_submit_reset_password').val($(this).val());
-    $('#modal_reset_password').modal('show');
+    $('#modal_change_password').modal('show');
   });
 
   $('.btn_submit_reset_password').click(function(e){

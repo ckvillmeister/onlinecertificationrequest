@@ -45,7 +45,7 @@ $(document).ready(function(){
     $('#cbo_muncity').on('change', function(){
     	var selected = $('#cbo_muncity').find('option:selected');
     	var data = selected.data('id'); 
-    	retireve_barangays(data);
+    	retrieve_barangays(data);
     });
 
     $('#cbo_schools').on('change', function(){
@@ -105,7 +105,7 @@ $(document).ready(function(){
 					});
 				error = true;
 			}
-			if (pickupdate == ''){
+			else if (pickupdate == ''){
 				$.alert({
 					    title: 'Empty',
 					    type: 'red',
@@ -113,19 +113,13 @@ $(document).ready(function(){
 					});
 				error = true;
 			}
-			else{
-				if (pdate <= datetoday){
-					$.alert({
+			else if (isPast(pickupdate)){
+				$.alert({
 					    title: 'Empty',
 					    type: 'red',
-					    content: 'Cannot select expired or current date as pick-up date!',
+					    content: 'Please select present or future date for your pick-up date!',
 					});
-					error = true;
-				}
-				else{
-					$('.error-message-pickupdate').html("<span id='message'></span>");
-					$('.error-message-pickupdate').addClass("text-success");
-				}
+				error = true;
 			}
 		}
 		else{
@@ -195,8 +189,8 @@ $(document).ready(function(){
 				error = true;
 			}
 			else{
-				if (pdate <= datetoday){
-					$('.error-message-pickupdate').html("<span id='message'>Cannot select expired or current date as pick-up date.</span>");
+				if (isPast(pickupdate) == 1){
+					$('.error-message-pickupdate').html("<span id='message'>Please select present or future date for your pick-up date.</span>");
 					$('.error-message-pickupdate').addClass("text-danger");
 					error = true;
 				}
@@ -320,6 +314,9 @@ $(document).ready(function(){
 		        ctr++;
 		      }
 		    });
+
+		 
+
 		submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, school_course, symptoms);
 	});
 
@@ -336,8 +333,7 @@ $(document).ready(function(){
 					    type: 'green',
 					    content: '<img class="mr-3" src="public/bootstrap/medilab_temp/assets/img/check.gif" width="50" height="50">' + ' ' + 'Login successful!'
 					});
-                    //$('#authentication-message').html("<img class='mt-3' src='public/bootstrap/medilab_temp/assets/img/load.gif' width='50' height='50'>");
-					setTimeout(function(){ window.location = 'dashboard';}, 3000);
+                    setTimeout(function(){ window.location = 'dashboard';}, 3000);
 	        	}
 	        	else{
 	        		$.alert({
@@ -351,7 +347,19 @@ $(document).ready(function(){
 	}
 
 	function submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, school_course, symptoms){
-		
+		var loading = $.alert({
+			title: '',
+		    content: '<div class="overlay text-center mt-5 mb-5">' +
+	                    '<i class="fas fa-3x fa-sync-alt fa-spin"></i>' +
+	                    '<div class="text-bold pt-2">Loading...</div>' +
+	                        '</div>',
+	        buttons: {
+        		ok: {
+		            isHidden: true,
+		        }
+		    }
+		});
+
         $.ajax({
 		    url: 'transaction/process_request',
 	        method: 'POST',
@@ -366,7 +374,13 @@ $(document).ready(function(){
 					pickupdate: pickupdate,
 					school_course: school_course,
 					symptoms: symptoms
-				},
+			},
+			beforeSend: function() {
+	          loading.open();
+	        },
+	        complete: function() {
+	          loading.close();
+	        },
 	        success: function(result) {
 	        	var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 				var date = new Date(pickupdate);
@@ -377,9 +391,10 @@ $(document).ready(function(){
 					    title: 'Success',
 					    type: 'green',
 					    content: 'Your request has been sent! <br>' +
-					    		'Go to Sure Care Medical Clinic located ' +
-					    		'Poblacion, Trinidad, Bohol on <strong>' + new_date + '</strong>' +
-					    		' to pick up your medical certificate.',
+					    		'Go to Sure Care Medical Clinic located at ' +
+					    		'Poblacion, Trinidad, Bohol (beside Cebuana Lhuiller) ' + 
+					    		'on <strong>' + new_date + '</strong> ' +
+					    		'to pick up your medical certificate.',
 					    buttons: {
 					        ok: function(){
 					        	location.reload();
@@ -387,8 +402,13 @@ $(document).ready(function(){
 					    }
 
 					});
-
-					
+	        	}
+	        	else if (result == 2){
+	        		$.alert({
+					    title: 'Warning!',
+					    type: 'red',
+					    content: 'Only one request is allowed per day. You may request again tomorrow. Thank you!',
+					});
 	        	}
 	        	else{
 	        		$.alert({
@@ -401,12 +421,31 @@ $(document).ready(function(){
 		});
 	}
 
-	function retireve_barangays(muncity_code){
+	function retrieve_barangays(muncity_code){
+		var loading = $.alert({
+			title: '',
+		    content: '<div class="overlay text-center mt-5 mb-5">' +
+	                    '<i class="fas fa-3x fa-sync-alt fa-spin"></i>' +
+	                    '<div class="text-bold pt-2">Loading...</div>' +
+	                        '</div>',
+	        buttons: {
+        		ok: {
+		            isHidden: true,
+		        }
+		    }
+		});
+
 		$.ajax({
 		    url: 'home/retrieve_barangays',
 	        method: 'POST',
 	        data: {muncity_code: muncity_code},
 	        dataType: 'JSON',
+	        beforeSend: function() {
+	          loading.open();
+	        },
+	        complete: function() {
+	          loading.close();
+	        },
 	        success: function(result) {
 	        	$('#cbo_barangay').empty();
 	        	$('#cbo_barangay').append('<option value=""> [ Barangay ] </option>');
@@ -418,11 +457,30 @@ $(document).ready(function(){
 	}
 
 	function retrieve_courses(school_id){
+		var loading = $.alert({
+			title: '',
+		    content: '<div class="overlay text-center mt-5 mb-5">' +
+	                    '<i class="fas fa-3x fa-sync-alt fa-spin"></i>' +
+	                    '<div class="text-bold pt-2">Loading...</div>' +
+	                        '</div>',
+	        buttons: {
+        		ok: {
+		            isHidden: true,
+		        }
+		    }
+		});
+
 		$.ajax({
 		    url: 'course/retrieve_courses',
 	        method: 'POST',
 	        data: {school_id: school_id},
 	        dataType: 'JSON',
+	        beforeSend: function() {
+	          loading.open();
+	        },
+	        complete: function() {
+	          loading.close();
+	        },
 	        success: function(result) {
 	        	$('#cbo_courses').empty();
 	        	$('#cbo_courses').append('<option value=""> [ Course ] - <i>For Students</i> </option>');
@@ -431,5 +489,50 @@ $(document).ready(function(){
 	        	});
 		    }
 		})
+	}
+
+	function isPast(pickupdate){
+		var pdate = new Date(pickupdate);
+		var datetoday = new Date();
+
+		var pyear = pdate.getFullYear();
+		var pmonth = pdate.getMonth();
+		var pday = pdate.getDate();
+
+		var tyear = datetoday.getFullYear();
+		var tmonth = datetoday.getMonth();
+		var tday = datetoday.getDate();
+
+		if (pyear === tyear){
+			if (pmonth === tmonth){
+		    	if (pday === tday){
+		    		return 0;
+		    	}
+		    	else{
+		        	if (pday < tday){
+		            	return 1;
+		        	}
+		            else{
+		            	return 0;
+		            }
+		    	}
+		    }
+		    else{
+		    	if (pmonth < tmonth){
+		        	return 1;
+		    	}
+		        else{
+		            return 0;
+		        }
+		    }
+		}
+		else{
+			if (pyear < tyear){
+		    	return 1;
+		    }
+		    else{
+		        return 0;
+		    }
+		}
 	}
 });

@@ -9,6 +9,20 @@ class transactionModel extends model{
 		$this->con = $db->connection();
 	}
 
+	public function get_ip(){
+		$ip = '';
+
+		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+		    $ip = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} else {
+		    $ip = $_SERVER['REMOTE_ADDR'];
+		}
+
+		return $ip;
+	}
+
 	public function process_request($firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $pickupdate, $school_course, $symptoms){
 		$status = 1;
 		$result = 0;
@@ -17,9 +31,22 @@ class transactionModel extends model{
 		$db = new database();
 		$this->con = $db->connection();
 		
-		//Save Request
-		$stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		$stmt->bind_param("sssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $status, $status);
+		/*$ip = $this->get_ip();
+		$today = date('Y-m-d');
+
+		$checkClientRequest = "SELECT * FROM tbl_certification_request WHERE DATE(request_date) = ? AND client_ip = ?";
+		$stmt = $this->con->prepare($checkClientRequest);
+		$stmt->bind_param("ss", $today, $ip);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		
+		if ($result->num_rows >= 1){
+			$result = 2;
+		}
+		else{*/
+			//Save Request
+		$stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, client_ip, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		$stmt->bind_param("ssssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $ip, $status, $status);
 		$stmt->execute();
 
 		if ($symptoms){
@@ -31,8 +58,8 @@ class transactionModel extends model{
 
 			$this->save_symptoms($id, $symptoms);
 		}
-
 		$result = 1;
+		//}
 
 		$stmt->close();
 		$this->con->close();
@@ -45,10 +72,12 @@ class transactionModel extends model{
 		$db = new database();
 		$this->con = $db->connection();
 		
-		foreach ($symptoms as $key => $symptom) {
-			$stmt = $this->con->prepare("INSERT INTO tbl_requesting_patient_symptoms (request_id, symptom_id, status) VALUES (?, ?, ?)");
-			$stmt->bind_param("sss", $requestid, $symptom, $status);
-			$stmt->execute();
+		if ($symptoms){
+			foreach ($symptoms as $key => $symptom) {
+				$stmt = $this->con->prepare("INSERT INTO tbl_requesting_patient_symptoms (request_id, symptom_id, status) VALUES (?, ?, ?)");
+				$stmt->bind_param("sss", $requestid, $symptom[0], $status);
+				$stmt->execute();
+			}
 		}
 
 		$result = 1;
@@ -218,158 +247,122 @@ class transactionModel extends model{
 		return $requests;
 	}
 
-	public function get_filtered_requests($date, $printstat, $symptomstat){
+	public function get_filtered_requests($requestdate, $pickupdate, $printstat, $symptomstat, $course){
 		$db = new database();
 		$this->con = $db->connection();
 		$requests = array();
+		$query = '';
 
-		if ($printstat){
+		if ($course){
+			$query = "SELECT tcr.record_id, tcr.firstname, tcr.middlename, tcr.lastname, tcr.extension, tcr.address, tcr.sex, tcr.dob, tcr.contact_number, tcr.request_date, tcr.pickup_date, tcr.status 
+						FROM tbl_certification_request tcr
+						INNER JOIN tbl_school_courses tsc ON tsc.record_id = tcr.school_course
+						INNER JOIN tbl_courses tc ON tc.record_id = tsc.course_id
+						WHERE tcr.status = 3
+						AND tc.record_id = ".$course;
+
+			$new_requestdate = date('Y-m-d', strtotime($requestdate));
+			$new_pickupdate = date('Y-m-d', strtotime($pickupdate));
+
+			if ($printstat == 1 | $printstat == 2){
+				$query .= " AND tcr.isprinted = ".$printstat;
+			}
+
+			if ($requestdate & $pickupdate){
+				$query .= " AND (DATE(tcr.request_date) = '".$new_requestdate."' OR DATE(tcr.pickup_date) = '".$new_pickupdate."')";
+			}
+			elseif ($requestdate){
+				$query .= " AND DATE(tcr.request_date) = '".$new_requestdate."'";
+			}
+			elseif ($pickupdate){
+				$query .= " AND DATE(tcr.pickup_date) = '".$new_pickupdate."'";
+			}
+
+
+		}
+		else{
 			$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status = 3";
+			$new_requestdate = date('Y-m-d', strtotime($requestdate));
+			$new_pickupdate = date('Y-m-d', strtotime($pickupdate));
 
 			if ($printstat == 1 | $printstat == 2){
 				$query .= " AND isprinted = ".$printstat;
 			}
 
-			$stmt = $this->con->prepare($query);
-			$stmt->execute();
-			$stmt->bind_result($id, $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact_number, $request_date, $pickup_date, $status);
-
-			while ($stmt->fetch()) {
-				if (!($symptomstat)){
-					$requests[] = array('id' => $id,
-									'firstname' => $firstname, 
-									'middlename' => $middlename, 
-									'lastname' => $lastname, 
-									'extension' => $extension, 
-									'address' => $address,
-									'sex' => $sex,
-									'dob' => $dob,  
-									'contact_number' => $contact_number,
-									'request_date' => $request_date,
-									'pickup_date' => $pickup_date,
-									'status' => $status);
-				}
-				else{
-					$qry = "SELECT * FROM tbl_requesting_patient_symptoms WHERE request_id = ".$id;
-					$conn = $db->connection();
-					$stmt2 = $conn->prepare($qry);
-					$stmt2->execute();
-					$result = $stmt2->get_result();
-		
-					if ($symptomstat == 1){
-						if ($result->num_rows <= 0){
-							$requests[] = array('id' => $id,
-									'firstname' => $firstname, 
-									'middlename' => $middlename, 
-									'lastname' => $lastname, 
-									'extension' => $extension, 
-									'address' => $address,
-									'sex' => $sex,
-									'dob' => $dob,  
-									'contact_number' => $contact_number,
-									'request_date' => $request_date,
-									'pickup_date' => $pickup_date,
-									'status' => $status);
-						}
-					}
-					elseif ($symptomstat == 2){
-						if ($result->num_rows >= 1){
-							$requests[] = array('id' => $id,
-									'firstname' => $firstname, 
-									'middlename' => $middlename, 
-									'lastname' => $lastname, 
-									'extension' => $extension, 
-									'address' => $address,
-									'sex' => $sex,
-									'dob' => $dob,  
-									'contact_number' => $contact_number,
-									'request_date' => $request_date,
-									'pickup_date' => $pickup_date,
-									'status' => $status);
-						}
-					}
-					
-				}
+			if ($requestdate & $pickupdate){
+				$query .= " AND (DATE(request_date) = '".$new_requestdate."' OR DATE(pickup_date) = '".$new_pickupdate."')";
 			}
-
-			$stmt->close();
+			elseif ($requestdate){
+				$query .= " AND DATE(request_date) = '".$new_requestdate."'";
+			}
+			elseif ($pickupdate){
+				$query .= " AND DATE(pickup_date) = '".$new_pickupdate."'";
+			}
 		}
-		else{
-			if ($date){
-				$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status = 3";
-				$new_date = date('Y-m-d', strtotime($date));
+		
+		$stmt = $this->con->prepare($query);
+		$stmt->execute();
+		$stmt->bind_result($id, $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact_number, $request_date, $pickup_date, $status);
 
-				if ($date){
-					$query .= " AND DATE(request_date) = '".$new_date."'";
-				}
-
-				$stmt = $this->con->prepare($query);
-				$stmt->execute();
-				$stmt->bind_result($id, $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact_number, $request_date, $pickup_date, $status);
-
-				while ($stmt->fetch()) {
-					if (!($symptomstat)){
+		while ($stmt->fetch()) {
+			if (!($symptomstat)){
+				$requests[] = array('id' => $id,
+								'firstname' => $firstname, 
+								'middlename' => $middlename, 
+								'lastname' => $lastname, 
+								'extension' => $extension, 
+								'address' => $address,
+								'sex' => $sex,
+								'dob' => $dob,  
+								'contact_number' => $contact_number,
+								'request_date' => $request_date,
+								'pickup_date' => $pickup_date,
+								'status' => $status);
+			}
+			else{
+				$qry = "SELECT * FROM tbl_requesting_patient_symptoms WHERE request_id = ".$id;
+				$conn = $db->connection();
+				$stmt2 = $conn->prepare($qry);
+				$stmt2->execute();
+				$result = $stmt2->get_result();
+	
+				if ($symptomstat == 1){
+					if ($result->num_rows <= 0){
 						$requests[] = array('id' => $id,
-										'firstname' => $firstname, 
-										'middlename' => $middlename, 
-										'lastname' => $lastname, 
-										'extension' => $extension, 
-										'address' => $address,
-										'sex' => $sex,
-										'dob' => $dob,  
-										'contact_number' => $contact_number,
-										'request_date' => $request_date,
-										'pickup_date' => $pickup_date,
-										'status' => $status);
-					}
-					else{
-						$qry = "SELECT * FROM tbl_requesting_patient_symptoms WHERE request_id = ".$id;
-						$conn = $db->connection();
-						$stmt2 = $conn->prepare($qry);
-						$stmt2->execute();
-						$result = $stmt2->get_result();
-			
-						if ($symptomstat == 1){
-							if ($result->num_rows <= 0){
-								$requests[] = array('id' => $id,
-										'firstname' => $firstname, 
-										'middlename' => $middlename, 
-										'lastname' => $lastname, 
-										'extension' => $extension, 
-										'address' => $address,
-										'sex' => $sex,
-										'dob' => $dob,  
-										'contact_number' => $contact_number,
-										'request_date' => $request_date,
-										'pickup_date' => $pickup_date,
-										'status' => $status);
-							}
-						}
-						elseif ($symptomstat == 2){
-							if ($result->num_rows >= 1){
-								$requests[] = array('id' => $id,
-										'firstname' => $firstname, 
-										'middlename' => $middlename, 
-										'lastname' => $lastname, 
-										'extension' => $extension, 
-										'address' => $address,
-										'sex' => $sex,
-										'dob' => $dob,  
-										'contact_number' => $contact_number,
-										'request_date' => $request_date,
-										'pickup_date' => $pickup_date,
-										'status' => $status);
-							}
-						}
-						
+								'firstname' => $firstname, 
+								'middlename' => $middlename, 
+								'lastname' => $lastname, 
+								'extension' => $extension, 
+								'address' => $address,
+								'sex' => $sex,
+								'dob' => $dob,  
+								'contact_number' => $contact_number,
+								'request_date' => $request_date,
+								'pickup_date' => $pickup_date,
+								'status' => $status);
 					}
 				}
-
-				$stmt->close();
+				elseif ($symptomstat == 2){
+					if ($result->num_rows >= 1){
+						$requests[] = array('id' => $id,
+								'firstname' => $firstname, 
+								'middlename' => $middlename, 
+								'lastname' => $lastname, 
+								'extension' => $extension, 
+								'address' => $address,
+								'sex' => $sex,
+								'dob' => $dob,  
+								'contact_number' => $contact_number,
+								'request_date' => $request_date,
+								'pickup_date' => $pickup_date,
+								'status' => $status);
+					}
+				}
+				
 			}
 		}
 
-		
+		$stmt->close();
 		return $requests;
 	}
 

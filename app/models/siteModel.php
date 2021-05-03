@@ -227,4 +227,5 @@ class siteModel extends model{
 		$this->con->close();
 		return $result;
 	}
+
 }

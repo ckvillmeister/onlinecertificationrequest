@@ -160,7 +160,7 @@ $new_reqs = count($transaction_model->get_requests(1));
             <li class="nav-item">
               <a href="<?php echo ROOT; ?>checklist" class="nav-link <?php echo ($link == 'checklist') ? 'active' : ''; ?>">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Checklist</p>
+                <p>Symptoms Checklist</p>
               </a>
             </li>
             <?php endif; ?>

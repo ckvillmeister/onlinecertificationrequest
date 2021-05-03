@@ -18,8 +18,8 @@ class dashboardController extends controller{
    			$transaction_model = new transactionModel();
    			$new_requests = $transaction_model->get_requests(1);
    			$pending_requests = $transaction_model->get_requests(2);
-   			$printed_requests = $transaction_model->get_filtered_requests(0, 2, 0);
-   			$unprinted_requests = $transaction_model->get_filtered_requests(0, 1, 0);
+   			$printed_requests = $transaction_model->get_filtered_requests(0, 0, 2, 0, 0);
+   			$unprinted_requests = $transaction_model->get_filtered_requests(0, 0, 1, 0, 0);
 
 			$request_per_month = array();
 			$months = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
