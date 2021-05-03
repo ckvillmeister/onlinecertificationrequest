@@ -31,8 +31,8 @@ class transactionModel extends model{
 		$db = new database();
 		$this->con = $db->connection();
 		
-		/*$ip = $this->get_ip();
-		$today = date('Y-m-d');
+		$ip = $this->get_ip();
+		/*$today = date('Y-m-d');
 
 		$checkClientRequest = "SELECT * FROM tbl_certification_request WHERE DATE(request_date) = ? AND client_ip = ?";
 		$stmt = $this->con->prepare($checkClientRequest);
