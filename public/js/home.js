@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+	var pickupdate_limit = 0;
+
 	$('#btn_login').click(function(e){
 		var username = $('#text_username').val(),
 			password = $('#text_password').val(),
@@ -45,7 +47,7 @@ $(document).ready(function(){
     $('#cbo_muncity').on('change', function(){
     	var selected = $('#cbo_muncity').find('option:selected');
     	var data = selected.data('id'); 
-    	retrieve_barangays(data);
+    	retireve_barangays(data);
     });
 
     $('#cbo_schools').on('change', function(){
@@ -105,7 +107,16 @@ $(document).ready(function(){
 					});
 				error = true;
 			}
-			else if (pickupdate == ''){
+			else if(pickupdate_limit == 1){
+				$.alert({
+				    title: 'Error',
+				    type: 'red',
+				    content: 'Pick-up date has reached its limit. Please select another pick-up date!',
+				});
+				error = true;
+			}
+
+			if (pickupdate == ''){
 				$.alert({
 					    title: 'Empty',
 					    type: 'red',
@@ -113,14 +124,22 @@ $(document).ready(function(){
 					});
 				error = true;
 			}
-			else if (isPast(pickupdate)){
-				$.alert({
+			else{
+				if (pdate <= datetoday){
+					$.alert({
 					    title: 'Empty',
 					    type: 'red',
-					    content: 'Please select present or future date for your pick-up date!',
+					    content: 'Cannot select expired or current date as pick-up date!',
 					});
-				error = true;
+					error = true;
+				}
+				else{
+					$('.error-message-pickupdate').html("<span id='message'></span>");
+					$('.error-message-pickupdate').addClass("text-success");
+				}
 			}
+
+
 		}
 		else{
 			if (firstname == ''){
@@ -189,8 +208,8 @@ $(document).ready(function(){
 				error = true;
 			}
 			else{
-				if (isPast(pickupdate) == 1){
-					$('.error-message-pickupdate').html("<span id='message'>Please select present or future date for your pick-up date.</span>");
+				if (pdate <= datetoday){
+					$('.error-message-pickupdate').html("<span id='message'>Cannot select expired or current date as pick-up date.</span>");
 					$('.error-message-pickupdate').addClass("text-danger");
 					error = true;
 				}
@@ -199,6 +218,17 @@ $(document).ready(function(){
 					$('.error-message-pickupdate').addClass("text-success");
 				}
 			}
+
+			if (pickupdate_limit == 1){
+				$('.error-message-pickupdate').html("<span id='message'>Pick-up date has reached its limit. Please select another pick-up date!</span>");
+				$('.error-message-pickupdate').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-pickupdate').html("");
+				$('.error-message-pickupdate').addClass("text-success");
+			}
+	        		
 		}
 
 		if (error == false){
@@ -289,6 +319,8 @@ $(document).ready(function(){
 		}
 	});
 
+	// $('#frmCertRequest').on('submit', function(e){
+ //    	e.preventDefault();
 	$('#btn_confirm').click(function(e){
 		var firstname = $('#text_firstname').val(),
 			middlename = $('#text_middlename').val(),
@@ -314,10 +346,43 @@ $(document).ready(function(){
 		        ctr++;
 		      }
 		    });
-
-		 
-
 		submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, school_course, symptoms);
+	});
+
+	$('#text_pickupdate').on('change', function(){
+		var pickup_date = $(this).val();
+		
+		$.ajax({
+		    url: 'transaction/check_pickupdate_limit',
+	        method: 'POST',
+	        data: {pickup_date: pickup_date},
+	        success: function(result) {
+	        	if (result == 1){
+	        		if ($( window ).width() < 992) {
+	        			$.alert({
+						    title: 'Error',
+						    type: 'red',
+						    content: 'Pick-up date has reached its limit. Please select another pick-up date!',
+						});
+	        		}
+	        		else{
+	        			$('.error-message-pickupdate').html("<span id='message'>Pick-up date has reached its limit. Please select another pick-up date.</span>");
+						$('.error-message-pickupdate').addClass("text-danger");
+	        		}
+
+	        		pickupdate_limit = 1;
+	        	}
+	        	else if(result == 0){
+	        		$('.error-message-pickupdate').html("");
+					$('.error-message-pickupdate').addClass("text-success");
+
+					pickupdate_limit = 0;
+	        	}
+	        	else{
+					pickupdate_limit = 0;
+	        	}
+		    }
+		})
 	});
 
 	function login(username, password){
@@ -333,7 +398,8 @@ $(document).ready(function(){
 					    type: 'green',
 					    content: '<img class="mr-3" src="public/bootstrap/medilab_temp/assets/img/check.gif" width="50" height="50">' + ' ' + 'Login successful!'
 					});
-                    setTimeout(function(){ window.location = 'dashboard';}, 3000);
+                    //$('#authentication-message').html("<img class='mt-3' src='public/bootstrap/medilab_temp/assets/img/load.gif' width='50' height='50'>");
+					setTimeout(function(){ window.location = 'transaction/certification';}, 3000);
 	        	}
 	        	else{
 	        		$.alert({
@@ -347,19 +413,7 @@ $(document).ready(function(){
 	}
 
 	function submit_request(firstname, middlename, lastname, extension, address, sex, dob, contact, pickupdate, school_course, symptoms){
-		var loading = $.alert({
-			title: '',
-		    content: '<div class="overlay text-center mt-5 mb-5">' +
-	                    '<i class="fas fa-3x fa-sync-alt fa-spin"></i>' +
-	                    '<div class="text-bold pt-2">Loading...</div>' +
-	                        '</div>',
-	        buttons: {
-        		ok: {
-		            isHidden: true,
-		        }
-		    }
-		});
-
+		
         $.ajax({
 		    url: 'transaction/process_request',
 	        method: 'POST',
@@ -374,12 +428,13 @@ $(document).ready(function(){
 					pickupdate: pickupdate,
 					school_course: school_course,
 					symptoms: symptoms
-			},
+				},
 			beforeSend: function() {
-	          loading.open();
-	        },
-	        complete: function() {
-	          loading.close();
+				$('#confirm').modal('hide');
+				$('#basicloader').show();
+			},
+	        complete: function(){
+	          	$('#basicloader').hide();
 	        },
 	        success: function(result) {
 	        	var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -391,10 +446,9 @@ $(document).ready(function(){
 					    title: 'Success',
 					    type: 'green',
 					    content: 'Your request has been sent! <br>' +
-					    		'Go to Sure Care Medical Clinic located at ' +
-					    		'Poblacion, Trinidad, Bohol (beside Cebuana Lhuiller) ' + 
-					    		'on <strong>' + new_date + '</strong> ' +
-					    		'to pick up your medical certificate.',
+					    		'Go to Sure Care Medical Clinic located ' +
+					    		'Poblacion, Trinidad, Bohol on <strong>' + new_date + '</strong>' +
+					    		' to pick up your medical certificate.',
 					    buttons: {
 					        ok: function(){
 					        	location.reload();
@@ -403,49 +457,24 @@ $(document).ready(function(){
 
 					});
 	        	}
-	        	else if (result == 2){
-	        		$.alert({
-					    title: 'Warning!',
-					    type: 'red',
-					    content: 'Only one request is allowed per day. You may request again tomorrow. Thank you!',
-					});
-	        	}
 	        	else{
-	        		$.alert({
+                    $.alert({
 					    title: 'Error',
 					    type: 'red',
 					    content: 'Error during submission!',
 					});
+	        		
 	        	}
 		    }
 		});
 	}
 
-	function retrieve_barangays(muncity_code){
-		var loading = $.alert({
-			title: '',
-		    content: '<div class="overlay text-center mt-5 mb-5">' +
-	                    '<i class="fas fa-3x fa-sync-alt fa-spin"></i>' +
-	                    '<div class="text-bold pt-2">Loading...</div>' +
-	                        '</div>',
-	        buttons: {
-        		ok: {
-		            isHidden: true,
-		        }
-		    }
-		});
-
+	function retireve_barangays(muncity_code){
 		$.ajax({
 		    url: 'home/retrieve_barangays',
 	        method: 'POST',
 	        data: {muncity_code: muncity_code},
 	        dataType: 'JSON',
-	        beforeSend: function() {
-	          loading.open();
-	        },
-	        complete: function() {
-	          loading.close();
-	        },
 	        success: function(result) {
 	        	$('#cbo_barangay').empty();
 	        	$('#cbo_barangay').append('<option value=""> [ Barangay ] </option>');
@@ -457,30 +486,11 @@ $(document).ready(function(){
 	}
 
 	function retrieve_courses(school_id){
-		var loading = $.alert({
-			title: '',
-		    content: '<div class="overlay text-center mt-5 mb-5">' +
-	                    '<i class="fas fa-3x fa-sync-alt fa-spin"></i>' +
-	                    '<div class="text-bold pt-2">Loading...</div>' +
-	                        '</div>',
-	        buttons: {
-        		ok: {
-		            isHidden: true,
-		        }
-		    }
-		});
-
 		$.ajax({
 		    url: 'course/retrieve_courses',
 	        method: 'POST',
 	        data: {school_id: school_id},
 	        dataType: 'JSON',
-	        beforeSend: function() {
-	          loading.open();
-	        },
-	        complete: function() {
-	          loading.close();
-	        },
 	        success: function(result) {
 	        	$('#cbo_courses').empty();
 	        	$('#cbo_courses').append('<option value=""> [ Course ] - <i>For Students</i> </option>');
@@ -489,50 +499,5 @@ $(document).ready(function(){
 	        	});
 		    }
 		})
-	}
-
-	function isPast(pickupdate){
-		var pdate = new Date(pickupdate);
-		var datetoday = new Date();
-
-		var pyear = pdate.getFullYear();
-		var pmonth = pdate.getMonth();
-		var pday = pdate.getDate();
-
-		var tyear = datetoday.getFullYear();
-		var tmonth = datetoday.getMonth();
-		var tday = datetoday.getDate();
-
-		if (pyear === tyear){
-			if (pmonth === tmonth){
-		    	if (pday === tday){
-		    		return 0;
-		    	}
-		    	else{
-		        	if (pday < tday){
-		            	return 1;
-		        	}
-		            else{
-		            	return 0;
-		            }
-		    	}
-		    }
-		    else{
-		    	if (pmonth < tmonth){
-		        	return 1;
-		    	}
-		        else{
-		            return 0;
-		        }
-		    }
-		}
-		else{
-			if (pyear < tyear){
-		    	return 1;
-		    }
-		    else{
-		        return 0;
-		    }
-		}
 	}
 });

@@ -2,6 +2,7 @@
 
 class transactionModel extends model{
 
+	//Status: 0 = Junked Requests, 1 = New Requests, 2 = New Requests (Indicator), 3 = Approved Requests
 	private $con;
 
 	public function __construct(){
@@ -27,43 +28,72 @@ class transactionModel extends model{
 		$status = 1;
 		$result = 0;
 		$datetime = date("Y-m-d h:i:s");
+		$month = date("m");
+		$year = date("Y");
+		$res = 0;
 
 		$db = new database();
 		$this->con = $db->connection();
-		
+
 		$ip = $this->get_ip();
-		/*$today = date('Y-m-d');
+		$today = date('Y-m-d');
 
-		$checkClientRequest = "SELECT * FROM tbl_certification_request WHERE DATE(request_date) = ? AND client_ip = ?";
-		$stmt = $this->con->prepare($checkClientRequest);
-		$stmt->bind_param("ss", $today, $ip);
-		$stmt->execute();
-		$result = $stmt->get_result();
+		// $checkClientRequest = "SELECT * FROM tbl_certification_request WHERE DATE(request_date) = ? AND client_ip = ?";
+		// $stmt = $this->con->prepare($checkClientRequest);
+		// $stmt->bind_param("ss", $today, $ip);
+		// $stmt->execute();
+		// $result = $stmt->get_result();
 		
-		if ($result->num_rows >= 1){
-			$result = 2;
-		}
-		else{*/
+		// if ($result->num_rows >= 1){
+		// 	$result = 2;
+		// }
+		// else{
 			//Save Request
-		$stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, client_ip, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		$stmt->bind_param("ssssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $ip, $status, $status);
+
+		// $query_month_dup = "SELECT * FROM tbl_certification_request WHERE (MONTH(request_date) = ? AND YEAR(request_date) = ?) AND firstname = ? AND middlename = ? AND lastname = ? AND extension = ?;";
+		// $stmt = $this->con->prepare($query_month_dup);
+		// $stmt->bind_param("ssssss", $month, $year, $firstname, $middlename, $lastname, $extension);
+		// $stmt->execute();
+		// $r = $stmt->get_result();
+		
+		// if ($r->num_rows >= 1){
+		// 	$data = $r->fetch_assoc();
+		// 	$req_date = $data['request_date'];
+		// 	$res = date('F d, Y', strtotime($req_date));
+		// }
+		// else{
+			//Save Request
+        // $stmt = $this->con->prepare("UPDATE tbl_certification_request SET status = 0 WHERE firstname = ? AND middlename = ? AND lastname = ? AND extension = ?");
+        // $stmt->bind_param("ssss", $firstname, $middlename, $lastname, $extension);
+		// $stmt->execute();
+		// $result = $stmt->get_result();
+
+        $remove_duplicated_requests = "UPDATE tbl_certification_request SET status = 0 WHERE firstname = ? AND middlename = ? AND lastname = ? AND extension = ? AND status IN (1, 2);";
+		$stmt = $this->con->prepare($remove_duplicated_requests);
+		$stmt->bind_param("ssss", $firstname, $middlename, $lastname, $extension);
 		$stmt->execute();
 
-		if ($symptoms){
-			//Retrieve Latest ID
-			$stmt = $this->con->prepare("SELECT record_id FROM tbl_certification_request WHERE record_id = (SELECT MAX(record_id) FROM tbl_certification_request)");
-			$stmt->execute();
-			$data = $stmt->get_result()->fetch_assoc();
-			$id = $data['record_id'];
+        $stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $status, $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-			$this->save_symptoms($id, $symptoms);
-		}
-		$result = 1;
+        if ($symptoms){
+            //Retrieve Latest ID
+            $stmt = $this->con->prepare("SELECT record_id FROM tbl_certification_request WHERE record_id = (SELECT MAX(record_id) FROM tbl_certification_request)");
+            $stmt->execute();
+            $data = $stmt->get_result()->fetch_assoc();
+            $id = $data['record_id'];
+
+            $this->save_symptoms($id, $symptoms);
+        }
+
+        $res = 1;
 		//}
-
+		
 		$stmt->close();
 		$this->con->close();
-		return $result;
+		return $res;
 	}
 
 	public function save_symptoms($requestid, $symptoms){
@@ -72,17 +102,16 @@ class transactionModel extends model{
 		$db = new database();
 		$this->con = $db->connection();
 		
-		if ($symptoms){
-			foreach ($symptoms as $key => $symptom) {
-				$stmt = $this->con->prepare("INSERT INTO tbl_requesting_patient_symptoms (request_id, symptom_id, status) VALUES (?, ?, ?)");
-				$stmt->bind_param("sss", $requestid, $symptom[0], $status);
-				$stmt->execute();
-			}
+		foreach ($symptoms as $key => $symptom) {
+			$stmt = $this->con->prepare("INSERT INTO tbl_requesting_patient_symptoms (request_id, symptom_id, status) VALUES (?, ?, ?)");
+			$stmt->bind_param("sss", $requestid, $symptom, $status);
+			$stmt->execute();
 		}
 
 		$result = 1;
 
 		$stmt->close();
+        $this->con->close();
 		return $result;
 	}
 
@@ -207,6 +236,7 @@ class transactionModel extends model{
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $info;
 	}
 
@@ -217,10 +247,10 @@ class transactionModel extends model{
 		$query = '';
 
 		if ($status == 2){
-			$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status IN (1, 2)";
+			$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status IN (1, 2) ORDER BY request_date DESC";
 		}
 		else{
-			$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status = ".$status;
+			$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status = ".$status. " ORDER BY request_date DESC";
 		}
 
 		$stmt = $this->con->prepare($query);
@@ -229,7 +259,22 @@ class transactionModel extends model{
 		$requests = array();
 
 		while ($stmt->fetch()) {
-			$requests[] = array('id' => $id,
+			$exist = 0;
+
+			foreach ($requests as $value) {
+				if (
+						trim($value['firstname']) == trim($firstname) &&
+						trim($value['middlename']) == trim($middlename) &&
+						trim($value['lastname']) == trim($lastname) &&
+						trim($value['extension']) == trim($extension)
+					){
+					$exist = 1;
+					break;
+				}
+			}
+
+			if (!($exist)){
+				$requests[] = array('id' => $id,
 								'firstname' => $firstname, 
 								'middlename' => $middlename, 
 								'lastname' => $lastname, 
@@ -241,9 +286,11 @@ class transactionModel extends model{
 								'request_date' => $request_date,
 								'pickup_date' => $pickup_date,
 								'status' => $status);
+			}
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $requests;
 	}
 
@@ -278,10 +325,11 @@ class transactionModel extends model{
 				$query .= " AND DATE(tcr.pickup_date) = '".$new_pickupdate."'";
 			}
 
-
+			$query .= ' ORDER BY tcr.lastname ASC, tcr.firstname ASC, tcr.middlename ASC';
 		}
 		else{
 			$query = "SELECT record_id, firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, status FROM tbl_certification_request WHERE status = 3";
+
 			$new_requestdate = date('Y-m-d', strtotime($requestdate));
 			$new_pickupdate = date('Y-m-d', strtotime($pickupdate));
 
@@ -298,6 +346,8 @@ class transactionModel extends model{
 			elseif ($pickupdate){
 				$query .= " AND DATE(pickup_date) = '".$new_pickupdate."'";
 			}
+
+			$query .= ' ORDER BY lastname ASC, firstname ASC, middlename ASC';
 		}
 		
 		$stmt = $this->con->prepare($query);
@@ -306,7 +356,22 @@ class transactionModel extends model{
 
 		while ($stmt->fetch()) {
 			if (!($symptomstat)){
-				$requests[] = array('id' => $id,
+				$exist = 0;
+
+				foreach ($requests as $value) {
+					if (
+							trim($value['firstname']) == trim($firstname) &&
+							trim($value['middlename']) == trim($middlename) &&
+							trim($value['lastname']) == trim($lastname) &&
+							trim($value['extension']) == trim($extension)
+						){
+						$exist = 1;
+						break;
+					}
+				}
+
+				if (!($exist)){
+					$requests[] = array('id' => $id,
 								'firstname' => $firstname, 
 								'middlename' => $middlename, 
 								'lastname' => $lastname, 
@@ -318,6 +383,7 @@ class transactionModel extends model{
 								'request_date' => $request_date,
 								'pickup_date' => $pickup_date,
 								'status' => $status);
+				}
 			}
 			else{
 				$qry = "SELECT * FROM tbl_requesting_patient_symptoms WHERE request_id = ".$id;
@@ -328,23 +394,54 @@ class transactionModel extends model{
 	
 				if ($symptomstat == 1){
 					if ($result->num_rows <= 0){
-						$requests[] = array('id' => $id,
-								'firstname' => $firstname, 
-								'middlename' => $middlename, 
-								'lastname' => $lastname, 
-								'extension' => $extension, 
-								'address' => $address,
-								'sex' => $sex,
-								'dob' => $dob,  
-								'contact_number' => $contact_number,
-								'request_date' => $request_date,
-								'pickup_date' => $pickup_date,
-								'status' => $status);
+						$exist = 0;
+
+						foreach ($requests as $value) {
+							if (
+									trim($value['firstname']) == trim($firstname) &&
+									trim($value['middlename']) == trim($middlename) &&
+									trim($value['lastname']) == trim($lastname) &&
+									trim($value['extension']) == trim($extension)
+								){
+								$exist = 1;
+								break;
+							}
+						}
+
+						if (!($exist)){
+							$requests[] = array('id' => $id,
+									'firstname' => $firstname, 
+									'middlename' => $middlename, 
+									'lastname' => $lastname, 
+									'extension' => $extension, 
+									'address' => $address,
+									'sex' => $sex,
+									'dob' => $dob,  
+									'contact_number' => $contact_number,
+									'request_date' => $request_date,
+									'pickup_date' => $pickup_date,
+									'status' => $status);
+						}
 					}
 				}
 				elseif ($symptomstat == 2){
 					if ($result->num_rows >= 1){
-						$requests[] = array('id' => $id,
+						$exist = 0;
+
+						foreach ($requests as $value) {
+							if (
+									trim($value['firstname']) == trim($firstname) &&
+									trim($value['middlename']) == trim($middlename) &&
+									trim($value['lastname']) == trim($lastname) &&
+									trim($value['extension']) == trim($extension)
+								){
+								$exist = 1;
+								break;
+							}
+						}
+
+						if (!($exist)){
+							$requests[] = array('id' => $id,
 								'firstname' => $firstname, 
 								'middlename' => $middlename, 
 								'lastname' => $lastname, 
@@ -356,6 +453,7 @@ class transactionModel extends model{
 								'request_date' => $request_date,
 								'pickup_date' => $pickup_date,
 								'status' => $status);
+						}
 					}
 				}
 				
@@ -363,6 +461,7 @@ class transactionModel extends model{
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $requests;
 	}
 
@@ -387,6 +486,7 @@ class transactionModel extends model{
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $findings;
 	}
 
@@ -411,6 +511,7 @@ class transactionModel extends model{
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $note;
 	}
 
@@ -437,6 +538,7 @@ class transactionModel extends model{
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $symptoms;
 	}
 
@@ -456,6 +558,7 @@ class transactionModel extends model{
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $exist;
 	}
 
@@ -468,6 +571,29 @@ class transactionModel extends model{
 		$stmt->execute();
 
 		$stmt->close();
+        $this->con->close();
 		return 1;
+	}
+
+	public function check_pickupdate_limit($pickup_date){
+		$db = new database();
+		$this->con = $db->connection();
+
+		$pickupdate = date('Y-m-d', strtotime($pickup_date));
+		$res = 0;
+		$query = "SELECT * FROM tbl_certification_request WHERE pickup_date = ? AND status <> 0";
+
+		$stmt = $this->con->prepare($query);
+		$stmt->bind_param("s", $pickupdate);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		
+		if ($result->num_rows > 600){
+			$res = 1;
+		}
+
+		$stmt->close();
+        $this->con->close();
+		return $res;
 	}
 }

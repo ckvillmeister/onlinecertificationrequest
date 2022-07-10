@@ -75,7 +75,10 @@
       }
     }
   </style>
-
+<div id="basicloader" style="display:none;width: 100%;position: fixed;left: 0px;top: 0px;height: 100%;z-index: 10000;background-color:rgba(0,0,0,0.5);">
+    <img src="<?php echo ROOT; ?>public/image/loader.gif" style="position: absolute;top: 0px;left: 0px;right: 0px;bottom: 0px;margin: auto;width: 80px;height: auto;">
+    <div style="position: absolute;top: 150px;left: 0px;right: 0px;bottom: 0px;margin: auto; width: 100%;height: 100px;text-align:center; padding-top:20px" ><h3 style="color:white;" id="basic-loader-msg">Loading...</h3></div>
+</div>
 </head>
 
 <body>
@@ -236,152 +239,172 @@
     <section id="appointment" class="appointment section-bg">
       <div class="container">
 
-        <div class="section-title">
-          <h2>Request Certificate</h2>
-          <p></p>
-        </div>
-        <div class="overlay-wrapper">
-        </div>
-        <!--<form action="" method="post" role="form" class="php-email-form">-->
-        <div class="php-email-form">
-          <div class="form-row">
-            <div class="col-md-3 form-group">
-              <input type="text" name="name" class="form-control" id="text_firstname" placeholder="First Name" data-rule="minlen:1" data-msg="Please enter your first name">
-              <div class="error-message-firstname"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <input type="text" class="form-control" name="text" id="text_middlename" placeholder="Middle Name">
-              <div class="validate"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <input type="text" class="form-control" name="phone" id="text_lastname" placeholder="Last Name" data-rule="minlen:1" data-msg="Please enter your last name">
-              <div class="error-message-lastname"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <select id="cbo_extension" class="form-control">
-                <option value=""> [ Extension ] </option>
-                <option value="Jr.">Jr.</option>
-                <option value="Sr.">Sr.</option>
-                <option value="I">I</option>
-                <option value="II">II</option>
-                <option value="III">III</option>
-                <option value="IV">IV</option>
-                <option value="V">V</option>
-              </select>
-            </div>
+        <!-- <form id="frmCertRequest"> -->
+          <div class="section-title">
+            <h2>Request Certificate</h2>
+            <p></p>
           </div>
-          <div class="form-row">
-            <div class="col-md-3 form-group">
-              <select id="cbo_sex" class="form-control">
-                <option value=""> [ Sex ] </option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-            <div class="col-md-3 form-group">
-              <input type="datetime" name="text_dob" class="form-control datepicker" id="text_dob" placeholder="Date of Birth" data-rule="minlen:4" data-msg="Please select date of birth">
-              <div class="validate"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <input type="text" class="form-control" name="text" id="text_contactno" placeholder="Contact Number" data-rule="minlen:1" data-msg="Please enter your contact number">
-              <div class="error-message-contactno"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <input type="datetime" name="text_pickupdate" class="form-control datepicker" id="text_pickupdate" placeholder="Pick-up Date" data-rule="minlen:4" data-msg="Please select pick-up date">
-              <div class="error-message-pickupdate"></div>
-            </div>
+          <div class="overlay-wrapper">
           </div>
-          <div class="form-row">
-            <div class="col-md-3 form-group">
-              <!--<input type="text" name="name" class="form-control" id="text_address" placeholder="Complete Address (Purok, Barangay, Municipality / City, Province" data-rule="minlen:1" data-msg="Please enter your complete address">
-              -->
-              <input type="text" name="name" class="form-control" id="text_prov" placeholder="Address (Province)" value="Bohol" readonly="readonly">
-              <div class="error-message-address"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <select id="cbo_muncity" class="form-control">
-                <option value=""> [ Municipality/City ] </option>
-                <?php
-                  foreach ($data['muncities'] as $key => $muncity) {
-                    echo "<option data-id='".$muncity['cmcode']."' value='".ucwords(strtolower($muncity['desc']))."'>".ucwords(strtolower($muncity['desc']))."</option>";
-                  }
-                ?>
-              </select>
-               <div class="error-message-addrmuncity"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <select id="cbo_barangay" class="form-control">
-                <option value=""> [ Barangay ] </option>
-              </select>
-              <div class="error-message-addrbrgy"></div>
-            </div>
-            <div class="col-md-3 form-group">
-              <input list="puroks" class="form-control" id="cbo_purok">
-              <datalist id="puroks">
-                <option value=""> [ Purok ] </option>
-                <option value="Purok 1"> Purok 1 </option>
-                <option value="Purok 2"> Purok 2 </option>
-                <option value="Purok 3"> Purok 3 </option>
-                <option value="Purok 4"> Purok 4 </option>
-                <option value="Purok 5"> Purok 5 </option>
-                <option value="Purok 6"> Purok 6 </option>
-                <option value="Purok 7"> Purok 7 </option>
-              </datalist>
-              <div class="error-message-course"></div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="col-md-6 form-group">
-              <select id="cbo_schools" class="form-control">
-                <option value=""> [ School ] - <i>For Students</i> </option>
-                <?php
-                  foreach ($data['schools'] as $key => $school) {
-                    echo "<option data-id='".$school['id']."' value='".ucwords(strtolower($school['school']))."'>".ucwords(strtolower($school['school']))."</option>";
-                  }
-                ?>
-              </select>
-              <div class="error-message-addrpurok"></div>
-            </div>
-            <div class="col-md-6 form-group">
-              <select id="cbo_courses" class="form-control">
-                <option value=""> [ Course ] - <i>For Students</i> </option>
-              </select>
-              <div class="error-message-course"></div>
-            </div>
-          </div>
-          <br>
-          <div class="form-row">
-            <div class="col-md-12 text-center">
-              <h5><strong>Symptoms Checklist</strong></h5>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="col-md-12 text-dark">
-              <p><strong>Please check if you're experiencing the following: </strong></p>
-            </div>
-          </div>
-          <div class="form-row" id="symptoms_checklist">
-            <?php 
-              foreach ($data['checklist'] as $key => $symptom) {
-            ?>
-              <div class="col-md-4 p-1">
-                <div class="bg-light">
-                  <h6>
-                    <input type="checkbox" class="align-middle ml-3 mr-2" value="<?php echo $symptom['id']; ?>" data-desc="<?php echo $symptom['desc']; ?>">
-                    <?php echo $symptom['desc']; ?>
-                  </h6>
-                </div>
+          <!--<form action="" method="post" role="form" class="php-email-form">-->
+          <div class="php-email-form">
+            <div class="form-row">
+              <div class="col-md-12 text-dark">
+                <p><strong style="color: red"><em>Note: Please book your pick-up date the day after your request</em></strong></p>
               </div>
-            <?php
-              }
-            ?>
+            </div>
+            <div class="form-row">
+              <div class="col-md-3 form-group">
+                <label for="text_firstname"><strong>First Name</strong></label>
+                <input type="text" name="name" class="form-control" id="text_firstname" placeholder="" data-rule="minlen:1" data-msg="Please enter your first name" style="border-radius: 5px">
+                <div class="error-message-firstname"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="text_middlename"><strong>Middle Name</strong></label>
+                <input type="text" class="form-control" name="text" id="text_middlename" placeholder="" style="border-radius: 5px">
+                <div class="validate"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="text_lastname"><strong>Last Name</strong></label>
+                <input type="text" class="form-control" name="phone" id="text_lastname" placeholder="" data-rule="minlen:1" data-msg="Please enter your last name" style="border-radius: 5px">
+                <div class="error-message-lastname"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="cbo_extension"><strong>Name Extension</strong></label>
+                <select id="cbo_extension" class="form-control" style="border-radius: 5px">
+                  <option value=""> [ Extension ] </option>
+                  <option value="Jr.">Jr.</option>
+                  <option value="Sr.">Sr.</option>
+                  <option value="I">I</option>
+                  <option value="II">II</option>
+                  <option value="III">III</option>
+                  <option value="IV">IV</option>
+                  <option value="V">V</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-3 form-group">
+                <label for="cbo_sex"><strong>Sex</strong></label>
+                <select id="cbo_sex" class="form-control" style="border-radius: 5px">
+                  <option value=""> [ Sex ] </option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="datetime"><strong>Date of Birth</strong></label>
+                <input type="datetime" name="text_dob" class="form-control datepicker" id="text_dob" placeholder="Date of Birth" data-rule="minlen:4" data-msg="Please select date of birth" style="border-radius: 5px">
+                <div class="validate"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="text_contactno"><strong>Contact Number</strong></label>
+                <input type="text" class="form-control" name="text" id="text_contactno" placeholder="(09XX-XXXXXXXX)" data-rule="minlen:1" data-msg="Please enter your contact number" style="border-radius: 5px">
+                <div class="error-message-contactno"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="text_pickupdate"><strong>Pick-up Date</strong></label>
+                <input type="datetime" name="text_pickupdate" class="form-control datepicker" id="text_pickupdate" placeholder="Pick-up Date" data-rule="minlen:4" data-msg="Please select pick-up date" style="border-radius: 5px">
+                <div class="error-message-pickupdate"></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-3 form-group">
+                <!--<input type="text" name="name" class="form-control" id="text_address" placeholder="Complete Address (Purok, Barangay, Municipality / City, Province" data-rule="minlen:1" data-msg="Please enter your complete address">
+                -->
+                <label for="text_prov"><strong>Province</strong></label>
+                <input type="text" name="name" class="form-control" id="text_prov" placeholder="Address (Province)" value="Bohol" readonly="readonly" style="border-radius: 5px">
+                <div class="error-message-address"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="cbo_muncity"><strong>Municipality / City</strong></label>
+                <select id="cbo_muncity" class="form-control" style="border-radius: 5px">
+                  <option value=""> [ Municipality/City ] </option>
+                  <?php
+                    foreach ($data['muncities'] as $key => $muncity) {
+                      echo "<option data-id='".$muncity['cmcode']."' value='".ucwords(strtolower($muncity['desc']))."'>".ucwords(strtolower($muncity['desc']))."</option>";
+                    }
+                  ?>
+                </select>
+                 <div class="error-message-addrmuncity"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="cbo_barangay"><strong>Barangay</strong></label>
+                <select id="cbo_barangay" class="form-control" style="border-radius: 5px">
+                  <option value=""> [ Barangay ] </option>
+                </select>
+                <div class="error-message-addrbrgy"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="cbo_purok"><strong>Purok / Sitio</strong></label>
+                <input list="puroks" class="form-control" id="cbo_purok" style="border-radius: 5px">
+                <datalist id="puroks">
+                  <option value=""> [ Purok ] </option>
+                  <option value="Purok 1"> Purok 1 </option>
+                  <option value="Purok 2"> Purok 2 </option>
+                  <option value="Purok 3"> Purok 3 </option>
+                  <option value="Purok 4"> Purok 4 </option>
+                  <option value="Purok 5"> Purok 5 </option>
+                  <option value="Purok 6"> Purok 6 </option>
+                  <option value="Purok 7"> Purok 7 </option>
+                </datalist>
+                <div class="error-message-course"></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-6 form-group">
+                <label for="cbo_schools"><strong>Name of School</strong></label>
+                <select id="cbo_schools" class="form-control" style="border-radius: 5px">
+                  <option value=""> [ School ] - <i>For Students</i> </option>
+                  <?php
+                    foreach ($data['schools'] as $key => $school) {
+                      echo "<option data-id='".$school['id']."' value='".ucwords(strtolower($school['school']))."'>".ucwords(strtolower($school['school']))."</option>";
+                    }
+                  ?>
+                </select>
+                <div class="error-message-addrpurok"></div>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="cbo_courses"><strong>Course</strong></label>
+                <select id="cbo_courses" class="form-control" style="border-radius: 5px">
+                  <option value=""> [ Course ] - <i>For Students</i> </option>
+                </select>
+                <div class="error-message-course"></div>
+              </div>
+            </div>
+            <br>
+            <div class="form-row">
+              <div class="col-md-12 text-center">
+                <h5><strong>Symptoms Checklist</strong></h5>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-12 text-dark">
+                <p><strong style="">Please check if you're experiencing the following: </strong></p>
+              </div>
+            </div>
+            <div class="form-row" id="symptoms_checklist">
+              <?php 
+                foreach ($data['checklist'] as $key => $symptom) {
+              ?>
+                <div class="col-md-4 p-1">
+                  <div class="bg-light">
+                    <h6>
+                      <input type="checkbox" class="align-middle ml-3 mr-2" value="<?php echo $symptom['id']; ?>" data-desc="<?php echo $symptom['desc']; ?>">
+                      <?php echo $symptom['desc']; ?>
+                    </h6>
+                  </div>
+                </div>
+              <?php
+                }
+              ?>
+            </div>
+            <div class="mb-3">
+              <div class="message-request"></div>
+            </div>
+            <div class="text-center"><button type="submit" id="btn_submitrequest">Submit Request</button></div>
           </div>
-          <div class="mb-3">
-            <div class="message-request"></div>
-          </div>
-          <div class="text-center"><button type="submit" id="btn_submitrequest">Submit Request</button></div>
-        </div>
-        <!--</form>-->
+        <!-- </form> -->
 
       </div>
     </section>

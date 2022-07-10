@@ -196,5 +196,13 @@ class transactionController extends controller{
 		echo json_encode($courses);
 	}
 
+	public function check_pickupdate_limit(){
+		$pickupdate = isset($_POST['pickup_date']) ? $_POST['pickup_date'] : 0;
+
+		$transaction_model = new transactionModel();
+		$res = $transaction_model->check_pickupdate_limit($pickupdate);
+		echo $res;
+	}
+
 }
 ?>

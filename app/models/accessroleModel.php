@@ -219,11 +219,12 @@ class accessroleModel extends model{
 		$query = "SELECT * FROM tbl_access_rights tar
 						INNER JOIN tbl_access_code tac ON tac.record_id = tar.access_code_id
 						WHERE tar.role_id = ".$roleid." AND tac.access_code = '".$accesscode."' AND tar.status = 1";
-
+        
 		if (mysqli_num_rows(mysqli_query($this->con, $query)) >= 1){
 			$result = 1;
 		}
-			
+    
+        $this->con->close();
 		return $result;
 	}
 

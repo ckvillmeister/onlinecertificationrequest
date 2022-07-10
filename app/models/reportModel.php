@@ -22,8 +22,8 @@ class reportModel extends model{
 	}
 
 	public function total_request_per_month($month){
-		$query = 'SELECT COUNT(*) AS total FROM tbl_certification_request WHERE MONTH(request_date) = ? AND YEAR(request_date) = ?';
 		$year = date('Y');
+        $query = 'SELECT COUNT(*) AS total FROM tbl_certification_request WHERE MONTH(request_date) = ? AND YEAR(request_date) = ?';
 
 		$db = new database();
 		$this->con = $db->connection();

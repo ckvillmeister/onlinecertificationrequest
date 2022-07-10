@@ -76,11 +76,12 @@ class accountsModel extends model{
 		}
 
 		$stmt->close();
+        $this->con->close();
 		return $users;
 	}
 
 	public function get_user_info($id){
-		$db = new database();
+        $db = new database();
 		$this->con = $db->connection();
 		$stmt = $this->con->prepare("SELECT record_id, username, password, firstname, middlename, lastname, suffix, role_type, created_by FROM tbl_users WHERE record_id = ?");
 		$stmt->bind_param("s", $id);
