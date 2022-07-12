@@ -204,5 +204,17 @@ class transactionController extends controller{
 		echo $res;
 	}
 
+	public function print_list(){
+		$ids = isset($_POST['ids']) ? $_POST['ids'] : 0;
+
+		$transaction_model = new transactionModel();
+		$requests = $transaction_model->print_list($ids);
+
+		$settings_model = new settingsModel();
+		$settings = $settings_model->get_settings();
+		
+		$this->view()->render('transaction/certification/master_list.php', array('requests' => $requests, 'settings' => $settings));
+	}
+
 }
 ?>

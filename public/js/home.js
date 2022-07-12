@@ -457,6 +457,13 @@ $(document).ready(function(){
 
 					});
 	        	}
+	        	else if (result == 2){
+	        		$.alert({
+					    title: 'Error',
+					    type: 'red',
+					    content: 'Unable to proceed request. Request time limit is until 10:00 PM only'
+					});
+	        	}
 	        	else{
                     $.alert({
 					    title: 'Error',

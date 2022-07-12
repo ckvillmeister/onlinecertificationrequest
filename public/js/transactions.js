@@ -100,6 +100,7 @@ $(document).ready(function(){
                                   '<div class="col-lg-12">' +
                                     '<button class="btn btn-sm btn-secondary mr-1" style="width:100px" id="btn_filter">Generate</button>' +
                                     '<button class="btn btn-sm btn-secondary mr-1" style="width:100px" id="btn_print_all">Print All</button>' +
+                                    '<button class="btn btn-sm btn-secondary mr-1" style="width:100px" id="btn_print_list">Print List</button>' +
                                   '</div>' +
                                 '</div>');
     //'<button class="btn btn-sm btn-secondary mr-1" style="width:100px" id="btn_select_print">Print Custom</button>' +
@@ -276,6 +277,29 @@ $(document).ready(function(){
       });
       
       print_mult_certificate(request_ids, symptomstat);
+    }
+    
+  });
+
+  $('body').on('click', '#btn_print_list', function(){
+    
+    var request_ids = [], ctr = 0;
+
+    //if (! table.data().any()){
+    if (table.rows().count() <= 0){
+      $.alert({
+            title: 'Empty!',
+            type: 'red',
+            content: 'No displayed list of request to be printed!',
+        });
+    }
+    else{
+      $('#table_new_request_list #btn_print').each(function(){
+        request_ids[ctr] = $(this).val();
+        ctr++;
+      });
+      
+      print_list(request_ids);
     }
     
   });
@@ -669,6 +693,36 @@ $(document).ready(function(){
           $.each(result, function(key, value) {
             $('body').find('#cbo_courses').append('<option value="'+value['id']+'">'+value['desc']+'</option');
           });
+        },
+        error: function(obj, err, ex){
+          $.alert({
+              title: 'Error!',
+              content: err + ": " + obj.toString() + " " + ex,
+              type: 'red',
+          });
+      }
+    })
+  }
+
+  function print_list(ids){
+    $.ajax({
+        url: 'print_list',
+          method: 'POST',
+          data: {ids: ids},
+          dataType: 'html',
+        success: function(result) {
+          var mywindow = window.open('', 'Master List', 'height=800,width=1020,scrollbars=yes');
+          mywindow.document.write('<html><head>');
+          mywindow.document.write('<title>Master List</title>');
+          mywindow.document.write('</head><body>');
+          mywindow.document.write(result);
+          mywindow.document.write('</body></html>');
+          mywindow.document.close();
+          setTimeout(function(){
+              mywindow.focus();
+              mywindow.print();    
+          },350);
+
         },
         error: function(obj, err, ex){
           $.alert({

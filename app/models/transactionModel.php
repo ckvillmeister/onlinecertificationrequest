@@ -28,6 +28,8 @@ class transactionModel extends model{
 		$status = 1;
 		$result = 0;
 		$datetime = date("Y-m-d h:i:s");
+		$hour = date("H");
+		$minute = date("i");
 		$month = date("m");
 		$year = date("Y");
 		$res = 0;
@@ -68,30 +70,34 @@ class transactionModel extends model{
 		// $stmt->execute();
 		// $result = $stmt->get_result();
 
-        $remove_duplicated_requests = "UPDATE tbl_certification_request SET status = 0 WHERE firstname = ? AND middlename = ? AND lastname = ? AND extension = ? AND status IN (1, 2);";
-		$stmt = $this->con->prepare($remove_duplicated_requests);
-		$stmt->bind_param("ssss", $firstname, $middlename, $lastname, $extension);
-		$stmt->execute();
+		if ($hour >= 22 && $minute > 0){
+			$res = 2;
+		}
+		else{
+	        $remove_duplicated_requests = "UPDATE tbl_certification_request SET status = 0 WHERE firstname = ? AND middlename = ? AND lastname = ? AND extension = ? AND status IN (1, 2);";
+			$stmt = $this->con->prepare($remove_duplicated_requests);
+			$stmt->bind_param("ssss", $firstname, $middlename, $lastname, $extension);
+			$stmt->execute();
 
-        $stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $status, $status);
-        $stmt->execute();
-        $result = $stmt->get_result();
+	        $stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	        $stmt->bind_param("sssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $status, $status);
+	        $stmt->execute();
+	        $result = $stmt->get_result();
+	        
+	        if ($symptoms){
+	            //Retrieve Latest ID
+	            $stmt = $this->con->prepare("SELECT record_id FROM tbl_certification_request WHERE record_id = (SELECT MAX(record_id) FROM tbl_certification_request)");
+	            $stmt->execute();
+	            $data = $stmt->get_result()->fetch_assoc();
+	            $id = $data['record_id'];
 
-        if ($symptoms){
-            //Retrieve Latest ID
-            $stmt = $this->con->prepare("SELECT record_id FROM tbl_certification_request WHERE record_id = (SELECT MAX(record_id) FROM tbl_certification_request)");
-            $stmt->execute();
-            $data = $stmt->get_result()->fetch_assoc();
-            $id = $data['record_id'];
+	            $this->save_symptoms($id, $symptoms);
+	        }
 
-            $this->save_symptoms($id, $symptoms);
-        }
-
-        $res = 1;
-		//}
+	        $res = 1;
+	        $stmt->close();
+		}
 		
-		$stmt->close();
 		$this->con->close();
 		return $res;
 	}
@@ -100,18 +106,18 @@ class transactionModel extends model{
 		$status = 1;
 		$result = 0;
 		$db = new database();
-		$this->con = $db->connection();
+		$conn = $db->connection();
 		
 		foreach ($symptoms as $key => $symptom) {
-			$stmt = $this->con->prepare("INSERT INTO tbl_requesting_patient_symptoms (request_id, symptom_id, status) VALUES (?, ?, ?)");
-			$stmt->bind_param("sss", $requestid, $symptom, $status);
+			$stmt = $conn->prepare("INSERT INTO tbl_requesting_patient_symptoms (request_id, symptom_id, status) VALUES (?, ?, ?)");
+			$stmt->bind_param("sss", $requestid, $symptom[0], $status);
 			$stmt->execute();
 		}
 
 		$result = 1;
 
 		$stmt->close();
-        $this->con->close();
+        $conn->close();
 		return $result;
 	}
 
@@ -581,7 +587,7 @@ class transactionModel extends model{
 
 		$pickupdate = date('Y-m-d', strtotime($pickup_date));
 		$res = 0;
-		$query = "SELECT * FROM tbl_certification_request WHERE pickup_date = ? AND status <> 0";
+		$query = "SELECT DISTINCT(CONCAT(TRIM(firstname), ' ', TRIM(middlename), ' ', TRIM(lastname))) FROM tbl_certification_request WHERE pickup_date = ? AND status = 3";
 
 		$stmt = $this->con->prepare($query);
 		$stmt->bind_param("s", $pickupdate);
@@ -595,5 +601,15 @@ class transactionModel extends model{
 		$stmt->close();
         $this->con->close();
 		return $res;
+	}
+
+	public function print_list($ids){
+		$requests = [];
+
+		foreach ($ids as $key => $id) {
+			$requests[] = $this->get_request_info($id);
+		}
+
+		return $requests;
 	}
 }
