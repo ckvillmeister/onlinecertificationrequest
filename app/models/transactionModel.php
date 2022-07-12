@@ -33,6 +33,10 @@ class transactionModel extends model{
 		$month = date("m");
 		$year = date("Y");
 		$res = 0;
+		$current_date = strtotime(date("Y-m-d"));
+		$pu_date = strtotime($pickupdate);
+		$datediff = $date - $current;
+		$difference = floor($datediff/(60*60*24));
 
 		$db = new database();
 		$this->con = $db->connection();
@@ -70,34 +74,35 @@ class transactionModel extends model{
 		// $stmt->execute();
 		// $result = $stmt->get_result();
 
-		if ($hour >= 22 && $minute > 0){
-			$res = 2;
-		}
-		else{
-	        $remove_duplicated_requests = "UPDATE tbl_certification_request SET status = 0 WHERE firstname = ? AND middlename = ? AND lastname = ? AND extension = ? AND status IN (1, 2);";
-			$stmt = $this->con->prepare($remove_duplicated_requests);
-			$stmt->bind_param("ssss", $firstname, $middlename, $lastname, $extension);
-			$stmt->execute();
-
-	        $stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	        $stmt->bind_param("sssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $status, $status);
-	        $stmt->execute();
-	        $result = $stmt->get_result();
-	        
-	        if ($symptoms){
-	            //Retrieve Latest ID
-	            $stmt = $this->con->prepare("SELECT record_id FROM tbl_certification_request WHERE record_id = (SELECT MAX(record_id) FROM tbl_certification_request)");
-	            $stmt->execute();
-	            $data = $stmt->get_result()->fetch_assoc();
-	            $id = $data['record_id'];
-
-	            $this->save_symptoms($id, $symptoms);
-	        }
-
-	        $res = 1;
-	        $stmt->close();
-		}
+		// if (($hour >= 22 && $minute > 0) && $difference == 1){
+		// 	$res = 2;
+		// }
+		// else{
+		// 	$res = 1;
+		// }
 		
+        $remove_duplicated_requests = "UPDATE tbl_certification_request SET status = 0 WHERE firstname = ? AND middlename = ? AND lastname = ? AND extension = ? AND status IN (1, 2);";
+		$stmt = $this->con->prepare($remove_duplicated_requests);
+		$stmt->bind_param("ssss", $firstname, $middlename, $lastname, $extension);
+		$stmt->execute();
+
+        $stmt = $this->con->prepare("INSERT INTO tbl_certification_request (firstname, middlename, lastname, extension, address, sex, dob, contact_number, request_date, pickup_date, school_course, isprinted, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssssssss", $firstname, $middlename, $lastname, $extension, $address, $sex, $dob, $contact, $datetime, $pickupdate, $school_course, $status, $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($symptoms){
+            //Retrieve Latest ID
+            $stmt = $this->con->prepare("SELECT record_id FROM tbl_certification_request WHERE record_id = (SELECT MAX(record_id) FROM tbl_certification_request)");
+            $stmt->execute();
+            $data = $stmt->get_result()->fetch_assoc();
+            $id = $data['record_id'];
+
+            $this->save_symptoms($id, $symptoms);
+        }
+
+        $res = 1;
+        $stmt->close();
 		$this->con->close();
 		return $res;
 	}

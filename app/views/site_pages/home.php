@@ -266,13 +266,13 @@
               </div>
               <div class="col-md-3 form-group">
                 <label for="text_lastname"><strong>Last Name</strong></label>
-                <input type="text" class="form-control" name="phone" id="text_lastname" placeholder="" data-rule="minlen:1" data-msg="Please enter your last name" style="border-radius: 5px">
+                <input type="text" class="form-control" name="phone" id="text_lastname" placeholder="Note: Blank for no middle name" data-rule="minlen:1" data-msg="Please enter your last name" style="border-radius: 5px">
                 <div class="error-message-lastname"></div>
               </div>
               <div class="col-md-3 form-group">
                 <label for="cbo_extension"><strong>Name Extension</strong></label>
                 <select id="cbo_extension" class="form-control" style="border-radius: 5px">
-                  <option value=""> [ Extension ] </option>
+                  <option value="">N/A</option>
                   <option value="Jr.">Jr.</option>
                   <option value="Sr.">Sr.</option>
                   <option value="I">I</option>
@@ -293,9 +293,9 @@
                 </select>
               </div>
               <div class="col-md-3 form-group">
-                <label for="datetime"><strong>Date of Birth</strong></label>
-                <input type="datetime" name="text_dob" class="form-control datepicker" id="text_dob" placeholder="Date of Birth" data-rule="minlen:4" data-msg="Please select date of birth" style="border-radius: 5px">
-                <div class="validate"></div>
+                <label for="text_dob"><strong>Date of Birth</strong></label>
+                <input type="date" name="text_dob" class="form-control datepicker" id="text_dob" placeholder="Date of Birth" data-rule="minlen:4" data-msg="Please select date of birth" style="border-radius: 5px">
+                <div class="error-message-dob"></div>
               </div>
               <div class="col-md-3 form-group">
                 <label for="text_contactno"><strong>Contact Number</strong></label>
@@ -304,7 +304,7 @@
               </div>
               <div class="col-md-3 form-group">
                 <label for="text_pickupdate"><strong>Pick-up Date</strong></label>
-                <input type="datetime" name="text_pickupdate" class="form-control datepicker" id="text_pickupdate" placeholder="Pick-up Date" data-rule="minlen:4" data-msg="Please select pick-up date" style="border-radius: 5px">
+                <input type="date" name="text_pickupdate" class="form-control datepicker" id="text_pickupdate" placeholder="Pick-up Date" data-rule="minlen:4" data-msg="Please select pick-up date" style="border-radius: 5px">
                 <div class="error-message-pickupdate"></div>
               </div>
             </div>
@@ -348,7 +348,7 @@
                   <option value="Purok 6"> Purok 6 </option>
                   <option value="Purok 7"> Purok 7 </option>
                 </datalist>
-                <div class="error-message-course"></div>
+                <div class="error-message-addrpurok"></div>
               </div>
             </div>
             <div class="form-row">
@@ -362,7 +362,7 @@
                     }
                   ?>
                 </select>
-                <div class="error-message-addrpurok"></div>
+                <div class="error-message-school"></div>
               </div>
               <div class="col-md-6 form-group">
                 <label for="cbo_courses"><strong>Course</strong></label>

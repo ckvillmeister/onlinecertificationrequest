@@ -107,6 +107,14 @@ $(document).ready(function(){
 					});
 				error = true;
 			}
+			else if(dob == ''){
+				$.alert({
+					    title: 'Empty',
+					    type: 'red',
+					    content: 'Please enter your birthdate!',
+					});
+				error = true;
+			}
 			else if(pickupdate_limit == 1){
 				$.alert({
 				    title: 'Error',
@@ -162,6 +170,16 @@ $(document).ready(function(){
 				$('.error-message-lastname').addClass("text-success");
 			}
 
+			if(dob == ''){
+				$('.error-message-dob').html("<span id='message'>Please enter your birthdate!</span>");
+				$('.error-message-dob').addClass("text-danger");
+				error = true;
+			}
+			else{
+				$('.error-message-dob').html("<span id='message'></span>");
+				$('.error-message-dob').addClass("text-success");
+			}
+
 			if(muncity == ''){
 				$('.error-message-addrmuncity').html("<span id='message'>Please select a municipality!</span>");
 				$('.error-message-addrmuncity').addClass("text-danger");
@@ -203,7 +221,7 @@ $(document).ready(function(){
 			}
 
 			if (pickupdate == ''){
-				$('.error-message-pickupdate').html("<span id='message'>Please select pick-up date.</span>");
+				$('.error-message-pickupdate').html("<span id='message'>Please select pick-up date!</span>");
 				$('.error-message-pickupdate').addClass("text-danger");
 				error = true;
 			}
@@ -225,8 +243,8 @@ $(document).ready(function(){
 				error = true;
 			}
 			else{
-				$('.error-message-pickupdate').html("");
-				$('.error-message-pickupdate').addClass("text-success");
+				// $('.error-message-pickupdate').html("");
+				// $('.error-message-pickupdate').addClass("text-success");
 			}
 	        		
 		}
